@@ -1,0 +1,5 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="16dp" /> <!-- 라운딩 반경 설정 -->
+    <solid android:color="#E044FF" /> <!-- 버튼 색상 -->
+</shape>
