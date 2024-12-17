@@ -79,28 +79,28 @@ ex) feat/#9-카카오로그인구현 -> develop
 - 자신의 코드가 직관적으로 바로 파악할 수 있다고 생각하지 말자
 - 여러가지 항목이 있다면 글머리 기호를 통해 가독성 높이기
 ## 폴더 구조
-📁 ProjectRoot/
-│
-├── 📁 app/                # 메인 애플리케이션 폴더
-│   ├── 📁 src/            # 소스 코드 폴더
-│   │   ├── 📁 main/       # 메인 소스 코드
-│   │   │   ├── 📁 java/   # Java/Kotlin 코드
-│   │   │   │   ├── 📁 com.example.app/  # 패키지 네임스페이스
-│   │   │   │   │   ├── MainActivity.kt        # 메인 액티비티
-│   │   │   │   │   ├── 📁 ui/                 # UI 관련 코드
-│   │   │   │   │   ├── 📁 model/              # 데이터 모델
-│   │   │   │   │   ├── 📁 repository/         # 데이터 관리
-│   │   │   │   │   ├── 📁 utils/              # 유틸리티 클래스
-│   │   │   ├── 📁 res/    # 리소스 폴더 (XML, 이미지 등)
-│   │   │   │   ├── 📁 layout/   # 레이아웃
-│   │   │   │   ├── 📁 font/ # 폰트
-│   │   │   │   ├── 📁 drawable/               # 이미지, 아이콘
-│   │   │   │   ├── 📁 values/                 # 스타일, 문자열, 컬러
-│   │   │   │   │   ├── colors.xml
-│   │   │   │   │   ├── strings.xml
-│   │   │   │   │   └── themes.xml
-│   │   │   └── AndroidManifest.xml # 매니페스트 파일
-│   │
-│   └── 📁 test/            # 테스트 코드 (필요하면 추가)
-│
-└── 📁 gradle/              # Gradle 관련 설정
+📁 ProjectRoot/<br/>
+│<br/>
+├── 📁 app/                # 메인 애플리케이션 폴더<br/>
+│   ├── 📁 src/            # 소스 코드 폴더<br/>
+│   │   ├── 📁 main/       # 메인 소스 코드<br/>
+│   │   │   ├── 📁 java/   # Java/Kotlin 코드<br/>
+│   │   │   │   ├── 📁 com.example.app/  # 패키지 네임스페이스<br/>
+│   │   │   │   │   ├── MainActivity.kt        # 메인 액티비티<br/>
+│   │   │   │   │   ├── 📁 ui/                 # UI 관련 코드<br/>
+│   │   │   │   │   ├── 📁 model/              # 데이터 모델<br/>
+│   │   │   │   │   ├── 📁 repository/         # 데이터 관리<br/>
+│   │   │   │   │   ├── 📁 utils/              # 유틸리티 클래스<br/>
+│   │   │   ├── 📁 res/    # 리소스 폴더 (XML, 이미지 등)<br/>
+│   │   │   │   ├── 📁 layout/   # 레이아웃<br/>
+│   │   │   │   ├── 📁 font/ # 폰트<br/>
+│   │   │   │   ├── 📁 drawable/               # 이미지, 아이콘<br/>
+│   │   │   │   ├── 📁 values/                 # 스타일, 문자열, 컬러<br/>
+│   │   │   │   │   ├── colors.xml<br/>
+│   │   │   │   │   ├── strings.xml<br/>
+│   │   │   │   │   └── themes.xml<br/>
+│   │   │   └── AndroidManifest.xml # 매니페스트 파일<br/>
+│   │<br/>
+│   └── 📁 test/            # 테스트 코드 (필요하면 추가)<br/>
+│<br/>
+└── 📁 gradle/              # Gradle 관련 설정<br/>
