@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="P900">#2D0E33</color>
+    <color name="P800">#5A1B66</color>
+    <color name="P700">#862999</color>
+    <color name="P600">#B337CC</color>
+    <color name="P500">#E044FF</color>
+    <color name="P400">#E66AFF</color>
+    <color name="P300">#EC8FFF</color>
+    <color name="P200">#F3B4FF</color>
+    <color name="P100">#F9DAFF</color>
+    <color name="G900">#000000</color>
+    <color name="G800">#333333</color>
+    <color name="G700">#4D4D4D</color>
+    <color name="G600">#666666</color>
+    <color name="G500">#808080</color>
+    <color name="G400">#999999</color>
+    <color name="G300">#B3B3B3</color>
+    <color name="G200">#CCCCCC</color>
+    <color name="G100">#E6E6E6</color>
 </resources>
