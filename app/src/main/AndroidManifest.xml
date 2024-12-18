@@ -23,6 +23,11 @@
             </intent-filter>
         </activity>
 
+        <!-- LoadingActivity 추가 -->
+        <activity
+            android:name=".LoadingActivity"
+            android:exported="false" />
+
         <!-- MainActivity 설정 -->
         <activity
             android:name=".MainActivity"
