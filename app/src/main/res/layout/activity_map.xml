@@ -61,6 +61,7 @@
         android:text="@string/map_add"
         android:textColor="@color/G000"
         android:textSize="15sp"
+        android:fontFamily="@font/pretendard_medium"
         android:background="@drawable/bg_mapbutton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
