@@ -15,5 +15,9 @@
     <string name="settingCardName">환경설정</string>>
     <string name="settingCardShortcut">바로가기</string>>
 
+    <!-- 로딩 화면 -->
+    <string name="loadingText">가장 적합한 낭만을 찾고 있어요..</string>>
+
+
 
 </resources>
