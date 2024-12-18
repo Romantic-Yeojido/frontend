@@ -1,19 +1,264 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:background="@color/G000">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+    <!-- 상단 바 -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:elevation="4dp"
+        android:background="@color/G000"
+        android:outlineProvider="background">
+
+        <!-- 심볼 -->
+        <ImageView
+            android:id="@+id/homeSymbol"
+            android:layout_width="12.21dp"
+            android:layout_height="28dp"
+            android:src="@drawable/ic_symbol"
+            android:layout_marginStart="22dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/homeLogotype"/>
+
+        <!-- 로고 -->
+        <ImageView
+            android:id="@+id/homeLogotype"
+            android:layout_width="94.89dp"
+            android:layout_height="20.71dp"
+            android:src="@drawable/ic_logotype"
+            android:layout_marginStart="20dp"
+            app:layout_constraintStart_toEndOf="@id/homeSymbol"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- 보물 박스 카드뷰 -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/treasureBoxCard"
+        android:layout_width="320dp"
+        android:layout_height="351dp"
+        app:cardCornerRadius="20dp"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/topBar"
+        android:layout_marginTop="30dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:clickable="true"
+        android:focusable="true"
+        app:cardBackgroundColor="@color/G100"
+        app:strokeColor="@color/G200"
+        android:elevation="0dp"
+        app:strokeWidth="1dp">
+
+        <!-- 카드 내용 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="16dp">
+
+            <!-- 보물 박스 이미지 -->
+            <ImageView
+                android:id="@+id/treasureBoxIv"
+                android:layout_width="250.09dp"
+                android:layout_height="170.32dp"
+                android:src="@drawable/ic_treasure_box" />
+
+            <!-- 보물 박스 텍스트 -->
+            <TextView
+                android:id="@+id/treasureBoxTvMain"
+                android:text="@string/treasureBoxMain"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textSize="21sp"
+                android:textColor="@color/G800"
+                android:fontFamily="@font/pretendard_bold" />
+
+            <!-- 설명 텍스트 -->
+            <TextView
+                android:id="@+id/treasureBoxTvSub"
+                android:text="@string/treasureBoxSub"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textSize="13sp"
+                android:textColor="@color/G600"
+                android:fontFamily="@font/pretendard_medium" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- 추억 요약 카드뷰 -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/memorySummary"
+        android:layout_width="320dp"
+        android:layout_height="50dp"
+        app:cardCornerRadius="10dp"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/treasureBoxCard"
+        android:layout_marginTop="30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:clickable="true"
+        android:focusable="true"
+        app:cardBackgroundColor="@color/G000"
+        app:strokeColor="@color/G200"
+        android:elevation="0dp"
+        app:strokeWidth="1dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="320dp"
+            android:layout_height="50dp"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <!-- 체크박스 이미지 -->
+            <ImageView
+                android:id="@+id/checkbox"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:src="@drawable/ic_checkbox"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="20dp" />
+
+            <!-- 추억 한 줄 요약 -->
+            <TextView
+                android:id="@+id/memorySummaryTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/memorySummary"
+                android:fontFamily="@font/pretendard_medium"
+                android:textColor="@color/G800"
+                android:textSize="15sp"
+                app:layout_constraintStart_toEndOf="@id/checkbox"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginStart="10dp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- 낭만여지도 카드뷰 -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/mapCard"
+        android:layout_width="150dp"
+        android:layout_height="182dp"
+        app:cardCornerRadius="10dp"
+        app:layout_constraintTop_toBottomOf="@id/memorySummary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/settingCard"
+        android:layout_marginTop="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:clickable="true"
+        android:focusable="true"
+        app:cardBackgroundColor="@color/G000"
+        app:strokeColor="@color/G200"
+        android:elevation="0dp"
+        app:strokeWidth="1dp">
+
+        <!-- 카드 내용 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="16dp">
+
+            <ImageView
+                android:layout_width="25.28dp"
+                android:layout_height="58dp"
+                android:src="@drawable/ic_symbol" />
+
+            <TextView
+                android:id="@+id/mapCardName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/mapCardName"
+                android:fontFamily="@font/pretendard_bold"
+                android:textColor="@color/G800"
+                android:textSize="15sp"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/mapCardShortcut"
+                android:layout_width="69dp"
+                android:layout_height="23dp"
+                android:text="@string/mapCardShortcut"
+                android:textColor="@color/G800"
+                android:textSize="11sp"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/outline_round"
+                android:gravity="center"
+                />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- 환경설정 카드뷰 -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/settingCard"
+        android:layout_width="150dp"
+        android:layout_height="182dp"
+        app:cardCornerRadius="10dp"
+        app:layout_constraintTop_toBottomOf="@id/memorySummary"
+        app:layout_constraintStart_toEndOf="@id/mapCard"
+        android:layout_marginTop="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:clickable="true"
+        android:focusable="true"
+        app:cardBackgroundColor="@color/G000"
+        app:strokeColor="@color/G200"
+        android:elevation="0dp"
+        app:strokeWidth="1dp">
+
+        <!-- 카드 내용 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="16dp">
+
+            <ImageView
+                android:layout_width="58dp"
+                android:layout_height="58dp"
+                android:src="@drawable/ic_setting" />
+
+            <TextView
+                android:id="@+id/settingCardName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settingCardName"
+                android:fontFamily="@font/pretendard_bold"
+                android:textColor="@color/G800"
+                android:textSize="15sp"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/settingCardShortcut"
+                android:layout_width="69dp"
+                android:layout_height="23dp"
+                android:text="@string/settingCardShortcut"
+                android:textColor="@color/G800"
+                android:textSize="11sp"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/outline_round"
+                android:gravity="center"
+                />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

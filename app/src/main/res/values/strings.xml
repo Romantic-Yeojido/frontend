@@ -24,5 +24,14 @@
     <!-- 스플래시 화면 -->
     <string name="splashSlogan">나만의 추억 지도 서비스</string>>
 
+    <!--    추억 등록하기 Strings-->
+    <string name="post_activity_title">추억 등록하기</string>
+    <string name="scrollview_description">스크롤뷰</string>
+    <string name="title_placeholder">추억 명을 입력해주세요.</string>
+    <string name="people_placeholder">함께한 사람을 입력해주세요.</string>
+    <string name="content_placeholder">추억에 관련된 내용을 자유롭게 작성해주세요.</string>
+    <string name="content_error">내용을 입력해주세요.</string>
+    <string name="register_btn_text">추억 등록하기</string>
+
 
 </resources>
