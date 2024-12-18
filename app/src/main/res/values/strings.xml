@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">RomanticYeojido</string>
 
+    <!-- 지도 화면 -->
     <string name="map_add">추억 등록하기</string>>
     <string name="map_title">낭만여지도</string>>
     <string name="tvPopupTitle">낭만여지도</string>>
