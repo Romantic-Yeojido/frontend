@@ -6,4 +6,13 @@
     </style>
 
     <style name="Theme.RomanticYeojido" parent="Base.Theme.RomanticYeojido" />
+
+    <style name="Widget.My.Spinner" parent="Widget.AppCompat.Spinner">
+        <item name="android:overlapAnchor">false</item>
+        <item name="overlapAnchor">false</item>
+        <item name="android:spinnerMode">dropdown</item>
+        <item name="android:dropDownWidth">match_parent</item>
+        <item name="android:background">@drawable/bg_spinner_default</item>
+    </style>
+
 </resources>
