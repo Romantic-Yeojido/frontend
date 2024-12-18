@@ -1,0 +1,8 @@
+<!-- res/drawable/outline_round.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@android:color/transparent" />
+    <corners android:radius="20dp" />
+    <stroke
+        android:color="@color/P300"
+    android:width="0.5dp" />
+</shape>
