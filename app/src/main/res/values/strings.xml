@@ -7,5 +7,13 @@
     <string name="tvPopupTitle">낭만여지도</string>>
     <string name="tvPopupDate">낭만여지도</string>>
     <string name="tvPopupDescription">낭만여지도</string>>
+    <string name="treasureBoxMain">잊고 살던 낭만을 뽑아봐요!</string>>
+    <string name="treasureBoxSub">보물 박스를 클릭하면 랜덤으로 낭만을 추천해드려요.</string>>
+    <string name="memorySummary">추억 한 줄 요약이 들어갈 예정입니다.</string>>
+    <string name="mapCardName">낭만여지도</string>>
+    <string name="mapCardShortcut">바로가기</string>>
+    <string name="settingCardName">환경설정</string>>
+    <string name="settingCardShortcut">바로가기</string>>
+
 
 </resources>
