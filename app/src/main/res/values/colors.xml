@@ -18,4 +18,6 @@
     <color name="G300">#B3B3B3</color>
     <color name="G200">#CCCCCC</color>
     <color name="G100">#E6E6E6</color>
+    <color name="G000">#FFFFFFF</color>
+    <color name="transparent">#00FF0000</color>
 </resources>
