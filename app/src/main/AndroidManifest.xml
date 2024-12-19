@@ -25,7 +25,8 @@
         <!-- SplashActivity 설정 -->
         <activity
             android:name=".SplashActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/SplashStatusTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -40,19 +41,24 @@
         <!-- MainActivity 설정 -->
         <activity
             android:name=".MainActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:theme="@style/FullStatusTheme"/>
 
-        <activity android:name=".ui.memoryPosts.MemoryPostActivity"
-            android:exported="true"/>
+        <activity android:name=".ui.memoryPost.MemoryPostActivity"
+            android:exported="true"
+            android:theme="@style/FullStatusTheme"/>
 
         <activity android:name=".ui.map.MapActivity"
-            android:exported="true"/>
+            android:exported="true"
+            android:theme="@style/FullStatusTheme"/>
 
         <activity android:name=".SettingsActivity"
-            android:exported="true"/>
+            android:exported="true"
+            android:theme="@style/FullStatusTheme"/>
 
         <activity android:name=".ui.locker.LockerActivity"
-            android:exported="true"/>
+            android:exported="true"
+            android:theme="@style/FullStatusTheme"/>
     </application>
 
 </manifest>

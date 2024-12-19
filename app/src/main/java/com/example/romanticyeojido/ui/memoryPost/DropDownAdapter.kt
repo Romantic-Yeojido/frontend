@@ -1,4 +1,4 @@
-package com.example.romanticyeojido.ui.memoryPosts
+package com.example.romanticyeojido.ui.memoryPost
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

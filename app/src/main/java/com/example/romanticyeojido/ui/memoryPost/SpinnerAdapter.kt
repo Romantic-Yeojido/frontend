@@ -1,4 +1,4 @@
-package com.example.romanticyeojido.ui.memoryPosts
+package com.example.romanticyeojido.ui.memoryPost
 
 import android.content.Context
 import android.view.Gravity
@@ -10,7 +10,7 @@ import com.example.romanticyeojido.R
 import com.example.romanticyeojido.databinding.ItemSpinnerDropdownBinding
 import com.example.romanticyeojido.databinding.ItemSpinnerDefaultBinding
 
-class CSpinnerAdapter(
+class SpinnerAdapter(
     context: Context,
     private val items: List<String>
 ) : ArrayAdapter<String>(context, 0, items) {
