@@ -20,11 +20,10 @@
     <!-- 로딩 화면 -->
     <string name="loadingText">가장 적합한 낭만을 찾고 있어요..</string>>
 
-
     <!-- 스플래시 화면 -->
     <string name="splashSlogan">나만의 추억 지도 서비스</string>>
 
-    <!--    추억 등록하기 Strings-->
+    <!-- 추억 등록하기 화면 -->
     <string name="post_activity_title">추억 등록하기</string>
     <string name="scrollview_description">스크롤뷰</string>
     <string name="title_placeholder">추억 명을 입력해주세요.</string>
@@ -33,5 +32,16 @@
     <string name="content_error">내용을 입력해주세요.</string>
     <string name="register_btn_text">추억 등록하기</string>
 
+    <!-- 환경설정 화면 -->
+    <string name="settings_title">환경설정</string>
+    <string name="policy_title">약관 및 정책</string>
+    <string name="terms_of_service">이용약관</string>
+    <string name="privacy_policy">개인정보 처리 방침</string>
+    <string name="location_terms">위치정보 이용 약관</string>
+    <string name="marketing_agreement">마케팅 정보 수신 동의 약관</string>
+    <string name="version_info">버전 정보</string>
+    <string name="version_placeholder">[버전]</string>
+    <string name="logout"><u>[로그아웃]</u></string>
+    <string name="delete_account"><u>[회원탈퇴]</u></string>
 
 </resources>
