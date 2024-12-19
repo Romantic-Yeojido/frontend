@@ -48,6 +48,8 @@
         <activity android:name=".ui.map.MapActivity"
             android:exported="true"/>
 
+        <activity android:name=".SettingsActivity"
+            android:exported="true"/>
     </application>
 
 </manifest>
