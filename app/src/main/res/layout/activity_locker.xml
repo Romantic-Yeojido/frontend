@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:background="@color/G000">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/topBar"
@@ -74,7 +75,7 @@
             <androidx.viewpager.widget.ViewPager
                 android:id="@+id/photoViewPager"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="320dp"
                 android:layout_marginBottom="16dp" />
 
             <!-- 제목 -->
@@ -83,18 +84,53 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/memory_title"
-                android:textSize="24sp"
-                android:textStyle="bold"
+                android:textSize="23sp"
+                android:fontFamily="@font/pretendard_bold"
                 android:layout_marginBottom="8dp" />
 
-            <!-- 날짜 -->
-            <TextView
-                android:id="@+id/memoryDate"
+            <!-- 날짜와 친구 -->
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/memory_date"
-                android:textSize="16sp"
-                android:layout_marginBottom="16dp" />
+                android:orientation="horizontal"
+                android:gravity="center_horizontal"
+                android:layout_marginBottom="16dp">
+
+                <!-- 날짜 -->
+                <ImageView
+                    android:src="@drawable/ic_date"
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:id="@+id/memoryDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/memory_date"
+                    android:textSize="17sp"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:textColor="@color/G600"
+                    android:layout_marginEnd="16dp" />
+
+                <!-- 친구 -->
+                <ImageView
+                    android:src="@drawable/ic_friend"
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="8dp"/>
+
+                <TextView
+                    android:id="@+id/memoryFriend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/memory_friend"
+                    android:textSize="17sp"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:textColor="@color/G600" />
+            </LinearLayout>
 
             <!-- 내용 -->
             <TextView
@@ -102,7 +138,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/memory_content"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:textColor="@color/G800"/>
 
         </LinearLayout>
     </ScrollView>
