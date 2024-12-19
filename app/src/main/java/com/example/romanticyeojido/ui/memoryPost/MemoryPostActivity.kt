@@ -26,13 +26,13 @@ class MemoryPostActivity: AppCompatActivity() {
         setContentView(binding.root)
 
         //Spinner Adapter 초기화
-        val yearAdapter = SpinnerAdapter(this, years)
+        val yearAdapter = CustomSpinnerAdapter(this, years)
         binding.postYearOptionDd.adapter = yearAdapter
 
-        val monthAdapter = SpinnerAdapter(this, months)
+        val monthAdapter = CustomSpinnerAdapter(this, months)
         binding.postMonthOptionDd.adapter = monthAdapter
 
-        val dayAdapter = SpinnerAdapter(this, days)
+        val dayAdapter = CustomSpinnerAdapter(this, days)
         binding.postDayOptionDd.adapter = dayAdapter
 
         //Spinner 이벤트 처리

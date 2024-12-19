@@ -10,7 +10,7 @@ import com.example.romanticyeojido.R
 import com.example.romanticyeojido.databinding.ItemSpinnerDropdownBinding
 import com.example.romanticyeojido.databinding.ItemSpinnerDefaultBinding
 
-class SpinnerAdapter(
+class CustomSpinnerAdapter(
     context: Context,
     private val items: List<String>
 ) : ArrayAdapter<String>(context, 0, items) {
