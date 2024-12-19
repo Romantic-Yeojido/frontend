@@ -24,5 +24,9 @@ class MainActivity : AppCompatActivity() {
         binding.mapCardShortcut.setOnClickListener {
             startActivity(Intent(this, MapActivity::class.java))
         }
+
+        binding.settingCardShortcut.setOnClickListener {
+            startActivity(Intent(this, SettingsActivity::class.java))
+        }
     }
 }

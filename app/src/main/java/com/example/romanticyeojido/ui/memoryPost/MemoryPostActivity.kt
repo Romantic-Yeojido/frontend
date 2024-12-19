@@ -1,13 +1,20 @@
 package com.example.romanticyeojido.ui.memoryPost
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.AdapterView
+import android.widget.ImageView
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.example.romanticyeojido.R
 import com.example.romanticyeojido.databinding.ActivityMemoryPostBinding
+import com.google.android.material.imageview.ShapeableImageView
+import com.google.android.material.shape.CornerFamily
+import com.google.android.material.shape.ShapeAppearanceModel
 
 class MemoryPostActivity: AppCompatActivity() {
 
@@ -18,6 +25,10 @@ class MemoryPostActivity: AppCompatActivity() {
     val days = listOf("날짜", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18",
         "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31")
 
+    companion object {
+        private const val REQUEST_CODE_SELECT_IMAGES = 1000
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -26,13 +37,13 @@ class MemoryPostActivity: AppCompatActivity() {
         setContentView(binding.root)
 
         //Spinner Adapter 초기화
-        val yearAdapter = CustomSpinnerAdapter(this, years)
+        val yearAdapter = SpinnerAdapter(this, years)
         binding.postYearOptionDd.adapter = yearAdapter
 
-        val monthAdapter = CustomSpinnerAdapter(this, months)
+        val monthAdapter = SpinnerAdapter(this, months)
         binding.postMonthOptionDd.adapter = monthAdapter
 
-        val dayAdapter = CustomSpinnerAdapter(this, days)
+        val dayAdapter = SpinnerAdapter(this, days)
         binding.postDayOptionDd.adapter = dayAdapter
 
         //Spinner 이벤트 처리
@@ -94,10 +105,17 @@ class MemoryPostActivity: AppCompatActivity() {
         binding.postRegisterBtn.setOnClickListener {
             // 버튼 클릭 시 유효성 검사 실행
             validateInputs()
+            if (binding.postRegisterBtn.isEnabled == true) {
+                finish()
+            }
         }
 
         binding.postIcBackBtn.setOnClickListener {
             finish()
+        }
+
+        binding.postAddImgBtn.setOnClickListener {
+            openGallery()
         }
     }
 
@@ -195,4 +213,52 @@ class MemoryPostActivity: AppCompatActivity() {
             binding.postRegisterBtn.setBackgroundResource(R.drawable.bg_register_btn_default)
         }
     }
+
+    private fun openGallery() {
+        val intent = Intent(Intent.ACTION_PICK).apply {
+            type = "image/*"
+            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+        }
+        startActivityForResult(intent, REQUEST_CODE_SELECT_IMAGES)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_SELECT_IMAGES && resultCode == RESULT_OK) {
+            val clipData = data?.clipData
+            if (clipData != null) {
+                for (i in 0 until clipData.itemCount) {
+                    val imageUri = clipData.getItemAt(i).uri
+                    addImageToScrollView(imageUri)
+                }
+            } else {
+                data?.data?.let { imageUri ->
+                    addImageToScrollView(imageUri)
+                }
+            }
+        }
+    }
+
+    private fun addImageToScrollView(imageUri: Uri) {
+        // 새로운 ImageView 생성
+        val imageView = ShapeableImageView(this).apply {
+            layoutParams = LinearLayout.LayoutParams(100.dpToPx(), 100.dpToPx()).apply {
+                marginEnd = 10.dpToPx()
+            }
+            setImageURI(imageUri)
+            scaleType = ImageView.ScaleType.CENTER_CROP
+            shapeAppearanceModel = ShapeAppearanceModel.builder()
+                .setAllCorners(CornerFamily.ROUNDED, 10.dpToPx().toFloat())
+                .build()
+        }
+
+        // LinearLayout에 추가
+        binding.postImgHv.addView(imageView)
+
+        // '이미지 추가 버튼'을 맨 뒤로 이동
+        binding.postImgHv.removeView(binding.postAddImgBtn)
+        binding.postImgHv.addView(binding.postAddImgBtn)
+    }
+
+    private fun Int.dpToPx(): Int = (this * resources.displayMetrics.density).toInt()
 }
