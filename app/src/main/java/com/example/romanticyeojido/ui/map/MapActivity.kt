@@ -42,7 +42,9 @@ class MapActivity: AppCompatActivity()  {
             startActivity(Intent(this, MemoryPostActivity::class.java))
         }
 
-
+        binding.btnBack.setOnClickListener {
+            finish()
+        }
 
         initializeMap()
     }
