@@ -42,13 +42,16 @@
             android:name=".MainActivity"
             android:exported="true" />
 
-        <activity android:name=".ui.memoryPost.MemoryPostActivity"
+        <activity android:name=".ui.memoryPosts.MemoryPostActivity"
             android:exported="true"/>
 
         <activity android:name=".ui.map.MapActivity"
             android:exported="true"/>
 
         <activity android:name=".SettingsActivity"
+            android:exported="true"/>
+
+        <activity android:name=".ui.locker.LockerActivity"
             android:exported="true"/>
     </application>
 

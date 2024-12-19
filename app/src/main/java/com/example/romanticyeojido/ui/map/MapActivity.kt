@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.romanticyeojido.R
 import com.example.romanticyeojido.databinding.ActivityMapBinding
-import com.example.romanticyeojido.ui.memoryPost.MemoryPostActivity
+import com.example.romanticyeojido.ui.memoryPosts.MemoryPostActivity
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
@@ -28,6 +28,11 @@ class MapActivity: AppCompatActivity()  {
         binding.btnRegister.setOnClickListener {
             startActivity(Intent(this, MemoryPostActivity::class.java))
         }
+
+        binding.btnBack.setOnClickListener {
+            finish()
+        }
+
         initializeMap()
     }
 
