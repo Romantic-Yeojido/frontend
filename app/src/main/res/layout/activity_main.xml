@@ -54,7 +54,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:clickable="true"
         android:focusable="true"
-        app:cardBackgroundColor="@color/G100"
+        app:cardBackgroundColor="@color/G000"
         app:strokeColor="@color/G200"
         android:elevation="0dp"
         app:strokeWidth="1dp">
