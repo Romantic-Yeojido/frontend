@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.romanticyeojido.databinding.ActivityLockerBinding
-import com.example.romanticyeojido.ui.memoryPosts.MemoryPostActivity
+import com.example.romanticyeojido.ui.memoryPost.MemoryPostActivity
 
 class LockerActivity: AppCompatActivity() {
 

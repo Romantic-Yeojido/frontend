@@ -1,4 +1,4 @@
-package com.example.romanticyeojido.ui.memoryPosts
+package com.example.romanticyeojido.ui.memoryPost
 
 import android.content.Intent
 import android.net.Uri
@@ -36,14 +36,30 @@ class MemoryPostActivity: AppCompatActivity() {
         binding = ActivityMemoryPostBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+//        // RecyclerView 초기화
+//        binding.dropdownRv.layoutManager = LinearLayoutManager(this)
+//        binding.dropdownRv.adapter = DropdownAdapter(years) { selectedItem ->
+//            binding.textRvBtn.text = selectedItem // 선택한 항목으로 TextView 업데이트
+//        }
+//
+//        // TextView 클릭 이벤트
+//        binding.dropdownBtn.setOnClickListener {
+//            val visibility = if (binding.testSv.visibility == View.VISIBLE) {
+//                View.GONE
+//            } else {
+//                View.VISIBLE
+//            }
+//            binding.testSv.visibility = visibility
+//        }
+
         //Spinner Adapter 초기화
-        val yearAdapter = CSpinnerAdapter(this, years)
+        val yearAdapter = SpinnerAdapter(this, years)
         binding.postYearOptionDd.adapter = yearAdapter
 
-        val monthAdapter = CSpinnerAdapter(this, months)
+        val monthAdapter = SpinnerAdapter(this, months)
         binding.postMonthOptionDd.adapter = monthAdapter
 
-        val dayAdapter = CSpinnerAdapter(this, days)
+        val dayAdapter = SpinnerAdapter(this, days)
         binding.postDayOptionDd.adapter = dayAdapter
 
         //Spinner 이벤트 처리

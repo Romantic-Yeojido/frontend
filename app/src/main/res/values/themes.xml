@@ -15,4 +15,16 @@
         <item name="android:background">@drawable/bg_spinner_default</item>
     </style>
 
+    <style name="FullStatusTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:statusBarColor">@color/G000</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <style name="SplashStatusTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:statusBarColor">@color/G900</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
 </resources>
