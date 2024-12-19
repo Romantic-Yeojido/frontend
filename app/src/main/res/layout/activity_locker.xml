@@ -71,12 +71,26 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- 사진 슬라이드 -->
-            <androidx.viewpager.widget.ViewPager
-                android:id="@+id/photoViewPager"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_vp"
                 android:layout_width="match_parent"
-                android:layout_height="320dp"
-                android:layout_marginBottom="16dp" />
+                android:layout_height="match_parent">
+
+                <!-- 사진 슬라이드 -->
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/photoViewPager"
+                    android:layout_width="match_parent"
+                    android:layout_height="320dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@color/G100"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
             <!-- 제목 -->
             <TextView
@@ -85,6 +99,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/memory_title"
                 android:textSize="23sp"
+                android:textColor="@color/G800"
                 android:fontFamily="@font/pretendard_bold"
                 android:layout_marginBottom="8dp" />
 

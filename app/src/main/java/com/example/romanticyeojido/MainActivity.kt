@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.example.romanticyeojido.databinding.ActivityMainBinding
+import com.example.romanticyeojido.ui.locker.LockerActivity
 import com.example.romanticyeojido.ui.map.MapActivity
 import com.kakao.sdk.common.util.Utility
 
@@ -27,6 +28,10 @@ class MainActivity : AppCompatActivity() {
 
         binding.settingCardShortcut.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
+        }
+
+        binding.treasureBoxIv.setOnClickListener {
+            startActivity(Intent(this, LockerActivity::class.java))
         }
     }
 }
