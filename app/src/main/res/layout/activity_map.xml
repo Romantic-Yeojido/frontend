@@ -74,7 +74,7 @@
             android:textColor="@color/G000"
             android:fontFamily="@font/pretendard_medium"
             android:gravity="center"
-            android:background="@color/P500" />
+            android:background="@color/G300" />
 
     </androidx.cardview.widget.CardView>
 
