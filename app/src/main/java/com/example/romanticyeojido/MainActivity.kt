@@ -8,6 +8,12 @@ import com.example.romanticyeojido.databinding.ActivityMainBinding
 import com.example.romanticyeojido.ui.locker.LockerActivity
 import com.example.romanticyeojido.ui.map.MapActivity
 import com.kakao.sdk.common.util.Utility
+import com.navercorp.nid.NaverIdLoginSDK
+import com.example.romanticyeojido.BuildConfig
+import com.navercorp.nid.oauth.NidOAuthLogin
+import com.navercorp.nid.oauth.OAuthLoginCallback
+import com.navercorp.nid.profile.NidProfileCallback
+import com.navercorp.nid.profile.data.NidProfileResponse
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,6 +28,18 @@ class MainActivity : AppCompatActivity() {
         val keyHash = Utility.getKeyHash(this)
         Log.d("Hash", keyHash)
 
+        val userName = intent.getStringExtra("USER_NAME")
+        val userEmail = intent.getStringExtra("USER_EMAIL")
+
+        Log.d("MainActivity", "User Name: $userName")
+        Log.d("MainActivity", "User Email: $userEmail")
+
+        initOnClickListener()
+    }
+
+
+
+    private fun initOnClickListener() {
         binding.mapCardShortcut.setOnClickListener {
             startActivity(Intent(this, MapActivity::class.java))
         }

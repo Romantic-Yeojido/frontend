@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-12-17T06:16:03.288911200Z">
+        <DropdownSelection timestamp="2024-12-20T17:11:15.441830400Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\hdg01\.android\avd\Galaxy_S24_API_35.avd" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=R3CRB07LH1P" />
             </handle>
           </Target>
         </DropdownSelection>
