@@ -25,7 +25,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/naver_login_btn"/>
+        app:layout_constraintBottom_toBottomOf="@id/kakao_login_btn"/>
 
     <TextView
         android:id="@+id/splashSlogan"
@@ -41,14 +41,24 @@
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <ImageView
+        android:id="@+id/kakao_login_btn"
+        android:layout_width="320dp"
+        android:layout_height="60dp"
+        android:src="@drawable/img_kakao_login_wide"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <ImageView
         android:id="@+id/naver_login_btn"
         android:layout_width="320dp"
         android:layout_height="40dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/kakao_login_btn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="10dp"
         android:scaleType="fitCenter"
-        android:layout_marginBottom="80dp"
         android:src="@drawable/img_naver_login"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
