@@ -52,7 +52,7 @@
             android:exported="true"
             android:theme="@style/FullStatusTheme"/>
 
-        <activity android:name=".SettingsActivity"
+        <activity android:name=".ui.settings.SettingsActivity"
             android:exported="true"
             android:theme="@style/FullStatusTheme"/>
 
@@ -61,11 +61,11 @@
             android:theme="@style/FullStatusTheme"/>
 
         <!-- SettingsActivity 설정 -->
-        <activity android:name=".TermsOfServiceActivity"
+        <activity android:name=".ui.settings.TermsOfServiceActivity"
             android:exported="true"/>
-        <activity android:name=".PrivacyPolicyActivity"
+        <activity android:name=".ui.settings.PrivacyPolicyActivity"
             android:exported="true"/>
-        <activity android:name=".LocationTermActivity"
+        <activity android:name=".ui.settings.LocationTermActivity"
             android:exported="true"/>
 
 
