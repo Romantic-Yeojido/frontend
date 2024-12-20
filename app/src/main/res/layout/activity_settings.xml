@@ -61,8 +61,8 @@
 
             <TextView
                 android:id="@+id/policy_title"
-                android:layout_width="101dp"
-                android:layout_height="25dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:fontFamily="@font/pretendard_bold"
                 android:text="@string/policy_title"
                 android:textColor="@color/G700"
@@ -70,7 +70,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_marginTop="20dp">
 
@@ -97,18 +97,18 @@
                         android:src="@drawable/ic_expand"
                         android:contentDescription="@string/terms_of_service"
                         app:tint="@color/G300"
-                        android:layout_marginEnd="10dp"/>
+                        android:layout_marginEnd="10dp" />
                 </LinearLayout>
 
                 <!-- 구분선 -->
                 <ImageView
-                    android:layout_width="320dp"
+                    android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:src="@drawable/ic_divider"
                     android:contentDescription="@string/terms_of_service"
                     app:tint="@color/G200"
                     android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"/>
+                    android:layout_marginBottom="5dp" />
 
                 <!-- 개인정보 처리 방침 -->
                 <LinearLayout
@@ -133,18 +133,18 @@
                         android:src="@drawable/ic_expand"
                         android:contentDescription="@string/terms_of_service"
                         app:tint="@color/G300"
-                        android:layout_marginEnd="10dp"/>
+                        android:layout_marginEnd="10dp" />
                 </LinearLayout>
 
                 <!-- 구분선 -->
                 <ImageView
-                    android:layout_width="320dp"
+                    android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:src="@drawable/ic_divider"
                     android:contentDescription="@string/terms_of_service"
                     app:tint="@color/G200"
                     android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"/>
+                    android:layout_marginBottom="5dp" />
 
                 <!-- 위치정보 이용 약관 -->
                 <LinearLayout
@@ -169,18 +169,18 @@
                         android:src="@drawable/ic_expand"
                         android:contentDescription="@string/terms_of_service"
                         app:tint="@color/G300"
-                        android:layout_marginEnd="10dp"/>
+                        android:layout_marginEnd="10dp" />
                 </LinearLayout>
 
                 <!-- 구분선 -->
                 <ImageView
-                    android:layout_width="320dp"
+                    android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:src="@drawable/ic_divider"
                     android:contentDescription="@string/terms_of_service"
                     app:tint="@color/G200"
                     android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"/>
+                    android:layout_marginBottom="5dp" />
 
                 <!-- 마케팅 정보 수신 동의 약관 -->
                 <LinearLayout
@@ -205,18 +205,18 @@
                         android:src="@drawable/ic_expand"
                         android:contentDescription="@string/terms_of_service"
                         app:tint="@color/G300"
-                        android:layout_marginEnd="10dp"/>
+                        android:layout_marginEnd="10dp" />
                 </LinearLayout>
 
                 <!-- 구분선 -->
                 <ImageView
-                    android:layout_width="320dp"
+                    android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:src="@drawable/ic_divider"
                     android:contentDescription="@string/terms_of_service"
                     app:tint="@color/G200"
                     android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"/>
+                    android:layout_marginBottom="5dp" />
             </LinearLayout>
 
             <!-- 버전 정보 -->
@@ -245,49 +245,40 @@
                     android:textSize="17sp"
                     android:layout_gravity="center_vertical" />
             </LinearLayout>
-                </LinearLayout>
+        </LinearLayout>
     </ScrollView>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <!-- 하단 버튼 -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="30dp"
-        android:layout_gravity="bottom">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-        <!-- 하단 버튼 -->
-        <LinearLayout
+        <!-- 왼쪽 텍스트 -->
+        <TextView
+            android:id="@+id/tv_logout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            android:layout_weight="1"
+            android:fontFamily="@font/pretendard_medium"
+            android:gravity="start"
+            android:text="@string/logout"
+            android:textColor="@color/G800"
+            android:textSize="13sp" />
 
-            <!-- 왼쪽 텍스트 -->
-            <TextView
-                android:id="@+id/tv_logout"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:fontFamily="@font/pretendard_medium"
-                android:gravity="start"
-                android:text="@string/logout"
-                android:textColor="@color/G800"
-                android:textSize="13sp" />
+        <!-- 오른쪽 텍스트 -->
+        <TextView
+            android:id="@+id/tv_delete_account"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/pretendard_medium"
+            android:gravity="end"
+            android:text="@string/delete_account"
+            android:textColor="@color/G800"
+            android:textSize="13sp" />
+    </LinearLayout>
 
-            <!-- 오른쪽 텍스트 -->
-            <TextView
-                android:id="@+id/tv_delete_account"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:fontFamily="@font/pretendard_medium"
-                android:gravity="end"
-                android:text="@string/delete_account"
-                android:textColor="@color/G800"
-                android:textSize="13sp" />
-        </LinearLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
