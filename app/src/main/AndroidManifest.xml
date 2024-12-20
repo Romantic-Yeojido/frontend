@@ -59,6 +59,16 @@
         <activity android:name=".ui.locker.LockerActivity"
             android:exported="true"
             android:theme="@style/FullStatusTheme"/>
+
+        <!-- SettingsActivity 설정 -->
+        <activity android:name=".TermsOfServiceActivity"
+            android:exported="true"/>
+        <activity android:name=".PrivacyPolicyActivity"
+            android:exported="true"/>
+        <activity android:name=".LocationTermActivity"
+            android:exported="true"/>
+
+
     </application>
 
 </manifest>
