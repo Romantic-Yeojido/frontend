@@ -1,19 +1,17 @@
 package com.example.romanticyeojido.ui.map
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
 import com.example.romanticyeojido.R
 import com.example.romanticyeojido.databinding.ActivityMapBinding
-import com.example.romanticyeojido.databinding.ItemMappopupBinding
+import com.example.romanticyeojido.network.PinInterface
+import com.example.romanticyeojido.network.PinResponse
+import com.example.romanticyeojido.network.getRetrofit
 import com.example.romanticyeojido.ui.memoryPost.MemoryPostActivity
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -25,12 +23,16 @@ import com.kakao.vectormap.label.LabelLayer
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MapActivity: AppCompatActivity()  {
 
     private lateinit var binding: ActivityMapBinding
     private var kakaoMap: KakaoMap? = null
     private var unsavedLabel: Label? = null // 저장되지 않은 라벨
+    private lateinit var pinInterface: PinInterface
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,6 +42,15 @@ class MapActivity: AppCompatActivity()  {
         binding = ActivityMapBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.btnRegister.isEnabled = false
+
+        // PinInterface 초기화
+        pinInterface = getRetrofit().create(PinInterface::class.java)
+
+        // 액세스 토큰 (예시로 하드코딩) 수정해야함!!!!!!!!!!!!!!!!!
+        val accessToken = "your_access_token_here"
+
+        // API 호출
+        fetchLocations(accessToken)
 
         binding.btnRegister.setOnClickListener {
             unsavedLabel?.let { label ->
@@ -57,6 +68,47 @@ class MapActivity: AppCompatActivity()  {
         }
 
         initializeMap()
+    }
+
+    //API 호출
+    private fun fetchLocations(accessToken: String) {
+        val call = pinInterface.getLocations("accessToken $accessToken")
+
+        call.enqueue(object : Callback<PinResponse> {
+            override fun onResponse(call: Call<PinResponse>, response: Response<PinResponse>) {
+                if (response.isSuccessful) {
+                    val pinResponse = response.body()
+                    if (pinResponse != null && pinResponse.success) {
+                        // 성공적으로 데이터를 받았을 경우
+                        pinResponse.locations.forEachIndexed { index, location ->
+                            Log.d("Location", "위치 $index: 위도: ${location.lat}, 경도: ${location.lng}")
+
+                            val styles = kakaoMap?.labelManager?.addLabelStyles(
+                                LabelStyles.from(
+                                    LabelStyle.from(R.drawable.ic_pin_gray).setAnchorPoint(0.5f, 1.0f)
+                                )
+                            )
+                            // 지도에 위치 추가
+                            val options = LabelOptions.from(LatLng.from(location.lat, location.lng)).setStyles(styles)
+                            val layer = kakaoMap?.labelManager?.layer
+
+                            if (layer != null) {
+                                val label = layer.addLabel(options)
+                                label.show()
+                            }
+                        }
+                    } else {
+                        Log.d("API", "응답이 성공적이지 않음")
+                    }
+                } else {
+                    Log.e("API", "응답 실패: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<PinResponse>, t: Throwable) {
+                Log.e("API", "API 호출 실패", t)
+            }
+        })
     }
 
     private fun initializeMap() {
@@ -133,27 +185,17 @@ class MapActivity: AppCompatActivity()  {
     private fun initLabelClickListener(kakaoMap: KakaoMap, layer: LabelLayer, label: Label) {
         Log.d("onLabelClicked", "Clicked Label Position: ${label.position}")
 
-        val inflater = LayoutInflater.from(this)
-        val popupView = inflater.inflate(R.layout.item_mappopup, null)
-        val binding = ItemMappopupBinding.bind(popupView)
+        val latitude = label.position.latitude // Label의 위도
+        val longitude = label.position.longitude // Label의 경도
 
-        // 팝업 윈도우 설정
-        val popupWindow = PopupWindow(
-            popupView,
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        ).apply {
-            isFocusable = true
-            isOutsideTouchable = true // 외부 터치 허용
-        }
-        val anchorView = binding.root // MapView를 기준으로 위치 설정
-        popupWindow.showAtLocation(anchorView, Gravity.BOTTOM,0,20)
-
-        binding.circleBtn.setOnClickListener {
+        val popupActivity = PopupActivity(this)
+        popupActivity.showPopup(binding.root, latitude, longitude) {
+            // 버튼 클릭 후 처리할 로직
             val intent = Intent(this, MemoryPostActivity::class.java)
             startActivity(intent)
         }
     }
+
 
     private fun clearUnsavedLabel() {
         unsavedLabel?.remove()
