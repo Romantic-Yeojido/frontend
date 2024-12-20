@@ -8,12 +8,7 @@ import com.example.romanticyeojido.databinding.ActivityMainBinding
 import com.example.romanticyeojido.ui.locker.LockerActivity
 import com.example.romanticyeojido.ui.map.MapActivity
 import com.kakao.sdk.common.util.Utility
-import com.navercorp.nid.NaverIdLoginSDK
-import com.example.romanticyeojido.BuildConfig
-import com.navercorp.nid.oauth.NidOAuthLogin
-import com.navercorp.nid.oauth.OAuthLoginCallback
-import com.navercorp.nid.profile.NidProfileCallback
-import com.navercorp.nid.profile.data.NidProfileResponse
+import com.example.romanticyeojido.ui.settings.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
 

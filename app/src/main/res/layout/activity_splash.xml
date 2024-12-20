@@ -41,24 +41,22 @@
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <ImageView
+        android:id="@+id/naver_login_btn"
+        android:layout_width="320dp"
+        android:layout_height="60dp"
+        app:layout_constraintBottom_toTopOf="@id/kakao_login_btn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/img_naver_login"/>
+
+    <ImageView
         android:id="@+id/kakao_login_btn"
         android:layout_width="320dp"
         android:layout_height="60dp"
-        android:src="@drawable/img_kakao_login_wide"
+        android:src="@drawable/img_kakao_login"
         android:layout_marginBottom="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
-
-    <ImageView
-        android:id="@+id/naver_login_btn"
-        android:layout_width="320dp"
-        android:layout_height="40dp"
-        app:layout_constraintBottom_toTopOf="@id/kakao_login_btn"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="10dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/img_naver_login"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

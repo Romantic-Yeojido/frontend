@@ -53,6 +53,7 @@ class SplashActivity : AppCompatActivity() {
         KakaoSdk.init(this, BuildConfig.NATIVE_APP_KEY)
         NaverLoginLogic()
    }
+
     private fun NaverLoginLogic() {
         binding.run {
             naverLoginBtn.setOnClickListener {
