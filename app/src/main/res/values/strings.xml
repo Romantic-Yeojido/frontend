@@ -4,9 +4,9 @@
     <!-- 지도 화면 -->
     <string name="map_add">추억 등록하기</string>>
     <string name="map_title">낭만여지도</string>>
-    <string name="tvPopupTitle">낭만여지도</string>>
-    <string name="tvPopupDate">낭만여지도</string>>
-    <string name="tvPopupDescription">낭만여지도</string>>
+    <string name="tvPopupTitle">데이터 로딩중</string>>
+    <string name="tvPopupDate">데이터 로딩중</string>>
+    <string name="tvPopupDescription">데이터 로딩중</string>>
 
     <!-- 홈 화면 -->
     <string name="treasureBoxMain">잊고 살던 낭만을 뽑아봐요!</string>>
