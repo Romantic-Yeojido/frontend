@@ -1,6 +1,7 @@
 package com.example.romanticyeojido.ui.map
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -11,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.example.romanticyeojido.R
 import com.example.romanticyeojido.databinding.ActivityMapBinding
 import com.example.romanticyeojido.databinding.ItemMappopupBinding
@@ -30,6 +32,9 @@ class MapActivity: AppCompatActivity()  {
 
     private lateinit var binding: ActivityMapBinding
     private var kakaoMap: KakaoMap? = null
+    private val savedLabels: MutableList<Label> = mutableListOf() // 저장된 라벨 리스트
+    private var unsavedLabel: Label? = null // 저장되지 않은 라벨
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,8 +42,10 @@ class MapActivity: AppCompatActivity()  {
         //binding 초기화
         binding = ActivityMapBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.btnRegister.isEnabled = false
 
         binding.btnRegister.setOnClickListener {
+            saveLabelData() // 라벨 데이터 저장
             startActivity(Intent(this, MemoryPostActivity::class.java))
         }
 
@@ -83,32 +90,41 @@ class MapActivity: AppCompatActivity()  {
         val cameraUpdate = CameraUpdateFactory.newCenterPosition(position,15)
         kakaoMap?.moveCamera(cameraUpdate)
 
-        settingLabel()
+        kakaoMap?.setOnMapClickListener { map, position, _, _ ->
+            addLabel(position) // 지도 클릭 시 라벨 추가
+            Log.d("MapClick", "Clicked Position: ${position.latitude}, ${position.longitude}")
         }
+    }
 
-    private fun settingLabel(){
-        val styles = kakaoMap?.labelManager?.addLabelStyles(LabelStyles.from(LabelStyle.from(R.drawable.ic_pin)
-            .setAnchorPoint(0.5f,0.5f)))
+    private fun addLabel(position: LatLng) {
+        // 기존 임시 라벨 제거
+        unsavedLabel?.remove()
 
-        val options = LabelOptions.from(LatLng.from(37.44983420181418,127.12727640486801))
-            .setStyles(styles)
+        val styles = kakaoMap?.labelManager?.addLabelStyles(
+            LabelStyles.from(
+                LabelStyle.from(R.drawable.ic_pin).setAnchorPoint(0.5f, 1.0f)
+            )
+        )
 
-
+        val options = LabelOptions.from(position).setStyles(styles)
         val labelManager = kakaoMap?.labelManager
         val layer = labelManager?.layer
 
-        if(layer != null) {
+        if (layer != null) {
             val label = layer.addLabel(options)
             label.show()
+            unsavedLabel = label // 새로 생성된 라벨을 임시 라벨로 설정
+
+
+            // btnRegister 활성화 및 색 변경
+            binding.btnRegister.isEnabled = true
+            binding.btnRegister.setBackgroundColor(ContextCompat.getColor(this, R.color.P500))
+
 
             kakaoMap?.setOnLabelClickListener { map, labelLayer, clickedLabel ->
                 initLabelClickListener(map, labelLayer, clickedLabel)
-                true // 이벤트 처리 완료를 의미
+                true
             }
-
-            Log.d("test","${label}")
-        }else{
-
         }
     }
 
@@ -137,6 +153,27 @@ class MapActivity: AppCompatActivity()  {
         }
     }
 
+    private fun saveLabelData() {
+        unsavedLabel?.let { label ->
+            val sharedPreferences = getSharedPreferences("MapPreferences", MODE_PRIVATE)
+            val labelSet = getStoredLabels(sharedPreferences).toMutableSet()
+            labelSet.add("${label.position.latitude},${label.position.longitude}")
+            with(sharedPreferences.edit()) {
+                putStringSet("stored_labels", labelSet)
+                apply()
+            }
+
+            // 저장된 라벨 리스트에 추가하고 임시 라벨 초기화
+            savedLabels.add(label)
+            unsavedLabel = null
+        }
+
+    }
+
+
+    private fun getStoredLabels(sharedPreferences: SharedPreferences): Set<String> {
+        return sharedPreferences.getStringSet("stored_labels", emptySet()) ?: emptySet()
+    }
 
 
     override fun onResume() {
