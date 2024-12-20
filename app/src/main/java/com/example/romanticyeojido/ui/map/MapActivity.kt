@@ -8,6 +8,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.PopupWindow
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.romanticyeojido.R
@@ -29,7 +30,6 @@ class MapActivity: AppCompatActivity()  {
 
     private lateinit var binding: ActivityMapBinding
     private var kakaoMap: KakaoMap? = null
-    private val savedLabels: MutableList<Label> = mutableListOf() // 저장된 라벨 리스트
     private var unsavedLabel: Label? = null // 저장되지 않은 라벨
 
 
@@ -42,8 +42,14 @@ class MapActivity: AppCompatActivity()  {
         binding.btnRegister.isEnabled = false
 
         binding.btnRegister.setOnClickListener {
-            saveLabelData() // 라벨 데이터 저장
-            startActivity(Intent(this, MemoryPostActivity::class.java))
+            unsavedLabel?.let { label ->
+                val intent = Intent(this, MemoryPostActivity::class.java).apply {
+                    putExtra("lat", label.position.latitude)
+                    putExtra("lng", label.position.longitude)
+                }
+                startActivity(intent)
+                clearUnsavedLabel() // 라벨 초기화
+            } ?: Toast.makeText(this, "핀을 선택해주세요!", Toast.LENGTH_SHORT).show()
         }
 
         binding.btnBack.setOnClickListener {
@@ -104,8 +110,7 @@ class MapActivity: AppCompatActivity()  {
         )
 
         val options = LabelOptions.from(position).setStyles(styles)
-        val labelManager = kakaoMap?.labelManager
-        val layer = labelManager?.layer
+        val layer = kakaoMap?.labelManager?.layer
 
         if (layer != null) {
             val label = layer.addLabel(options)
@@ -150,26 +155,11 @@ class MapActivity: AppCompatActivity()  {
         }
     }
 
-    private fun saveLabelData() {
-        unsavedLabel?.let { label ->
-            val sharedPreferences = getSharedPreferences("MapPreferences", MODE_PRIVATE)
-            val labelSet = getStoredLabels(sharedPreferences).toMutableSet()
-            labelSet.add("${label.position.latitude},${label.position.longitude}")
-            with(sharedPreferences.edit()) {
-                putStringSet("stored_labels", labelSet)
-                apply()
-            }
-
-            // 저장된 라벨 리스트에 추가하고 임시 라벨 초기화
-            savedLabels.add(label)
-            unsavedLabel = null
-        }
-
-    }
-
-
-    private fun getStoredLabels(sharedPreferences: SharedPreferences): Set<String> {
-        return sharedPreferences.getStringSet("stored_labels", emptySet()) ?: emptySet()
+    private fun clearUnsavedLabel() {
+        unsavedLabel?.remove()
+        unsavedLabel = null
+        binding.btnRegister.isEnabled = false
+        binding.btnRegister.setBackgroundColor(ContextCompat.getColor(this, R.color.G000))
     }
 
 

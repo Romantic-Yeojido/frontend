@@ -5,11 +5,13 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat.startActivityForResult
 import com.example.romanticyeojido.R
 import com.example.romanticyeojido.databinding.ActivityMemoryPostBinding
 import com.google.android.material.imageview.ShapeableImageView
@@ -18,6 +20,8 @@ import com.google.android.material.shape.ShapeAppearanceModel
 
 class MemoryPostActivity: AppCompatActivity() {
 
+    private var lat: Double? = null
+    private var lng: Double? = null
     private lateinit var binding : ActivityMemoryPostBinding
 
     val years = listOf("년도", "2020", "2021", "2022", "2023", "2024", "2025", "2026", "2027")
@@ -35,6 +39,16 @@ class MemoryPostActivity: AppCompatActivity() {
         //binding 초기화
         binding = ActivityMemoryPostBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
+        //좌표값 받기
+        val intent = intent
+        lat = intent.getDoubleExtra("lat", 0.0)
+        lng = intent.getDoubleExtra("lng", 0.0)
+
+        if (lat != null && lng != null) {
+            Log.d("MemoryPostActivity", "위도: $lat, 경도: $lng")
+        }
 
 //        // RecyclerView 초기화
 //        binding.dropdownRv.layoutManager = LinearLayoutManager(this)
