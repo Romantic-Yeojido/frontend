@@ -24,29 +24,10 @@ class MainActivity : AppCompatActivity() {
         val keyHash = Utility.getKeyHash(this)
         Log.d("Hash", keyHash)
 
-//        val userName = intent.getStringExtra("USER_NAME")
-//        val userEmail = intent.getStringExtra("USER_EMAIL")
-//        val userId = intent.getStringExtra("USER_ID")
-
-        val spf = getSharedPreferences("user_data", MODE_PRIVATE)
-        val userId = spf.getString("user_id", "")
-        val userName = spf.getString("user_name", "")
-        val userEmail = spf.getString("user_email", "")
-        val accessToken = spf.getString("accessToken", "")
-
-
-        val isApiSuccess = intent.getBooleanExtra("API_SUCCESS", false)  // 기본값은 false
-
-        if (isApiSuccess) {
-            Toast.makeText(this, "API 통신 성공", Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(this, "API 통신 실패", Toast.LENGTH_SHORT).show()
-        }
-
-        Log.d("MainActivity", "User Name: $userName")
-        Log.d("MainActivity", "User Email: $userEmail")
-        Log.d("MainActivity", "User Id: $userId")
-        Log.d("MainActivity", "accessToken: $accessToken")
+        // 웹 뷰에서 메인 액티비티로 유저 아이디 받아오기
+        val spf = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        val userId = spf.getInt("USER_ID", 0)
+        Log.d("MainActivity", "USER_ID in MainActivity: $userId")
 
         initOnClickListener()
     }
