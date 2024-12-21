@@ -12,6 +12,11 @@ import com.example.romanticyeojido.databinding.ActivityMapBinding
 import com.example.romanticyeojido.network.PinInterface
 import com.example.romanticyeojido.network.PinResponse
 import com.example.romanticyeojido.network.NaverAuthInterface
+import com.example.romanticyeojido.network.NewpinInterface
+import com.example.romanticyeojido.network.NewpinRequest
+import com.example.romanticyeojido.network.NewpinResponse
+import com.example.romanticyeojido.network.PopupInterface
+import com.example.romanticyeojido.network.PopupResponse
 import com.example.romanticyeojido.network.RetrofitClient
 import com.example.romanticyeojido.ui.memoryPost.MemoryPostActivity
 import com.kakao.vectormap.KakaoMap
@@ -34,7 +39,8 @@ class MapActivity: AppCompatActivity()  {
     private var kakaoMap: KakaoMap? = null
     private var unsavedLabel: Label? = null // 저장되지 않은 라벨
     private lateinit var pinInterface: PinInterface
-
+    private var latitude: String? = null
+    private var longitude: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,8 +60,11 @@ class MapActivity: AppCompatActivity()  {
 
         binding.btnRegister.setOnClickListener {
             unsavedLabel?.let { label ->
-                val intent = Intent(this, MemoryPostActivity::class.java).apply {
-                }
+
+                sendNewPin(userId,latitude,longitude) // 서버에 핀 정보 전송
+
+                val intent = Intent(this, MemoryPostActivity::class.java).apply{}
+
                 startActivity(intent)
                 clearUnsavedLabel() // 라벨 초기화
             } ?: Toast.makeText(this, "핀을 선택해주세요!", Toast.LENGTH_SHORT).show()
@@ -167,6 +176,9 @@ class MapActivity: AppCompatActivity()  {
             label.show()
             unsavedLabel = label // 새로 생성된 라벨을 임시 라벨로 설정
 
+            latitude = label.position.latitude.toString()
+            longitude = label.position.longitude.toString()
+
             // btnRegister 활성화 및 색 변경
             binding.btnRegister.isEnabled = true
             binding.btnRegister.setBackgroundColor(ContextCompat.getColor(this, R.color.P500))
@@ -194,6 +206,33 @@ class MapActivity: AppCompatActivity()  {
         popupActivity.showPopup(binding.root, userId) {
         }
     }
+
+
+    private fun sendNewPin(userId: Int, latitude: String?, longitude: String?) {
+        val apiService = RetrofitClient.instance.create(NewpinInterface::class.java)
+        val newpinRequest = NewpinRequest(
+            latitude = latitude,
+            longitude = longitude
+        )
+        apiService.postnewpin(userId, newpinRequest).enqueue(object : Callback<NewpinResponse> {
+            override fun onResponse(call: Call<NewpinResponse>, response: Response<NewpinResponse>) {
+                if (response.isSuccessful) {
+                    val pinResponse = response.body()
+                    if (pinResponse != null && pinResponse.success) {
+                        Log.d("NewpinAPI", "핀 정보 전송 성공: ${pinResponse.result}")
+                    } else {
+                        Log.e("NewpinAPI", "응답이 성공적이지 않음")
+                    }
+                } else {
+                    Log.e("NewpinAPI", "핀 정보 전송 실패: ${response.code()}")
+                }
+            }
+            override fun onFailure(call: Call<NewpinResponse>, t: Throwable) {
+                Log.e("NewpinAPI", "API 호출 실패", t)
+            }
+        })
+    }
+
 
 
     private fun clearUnsavedLabel() {
