@@ -7,6 +7,6 @@ data class PinResponse(
 )
 
 data class LocationData(
-    val lat: Double,
-    val lng: Double,
+    val latitude: Double,
+    val longitude: Double,
 )

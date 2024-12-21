@@ -47,34 +47,14 @@ class MapActivity: AppCompatActivity()  {
         // PinInterface 초기화
         pinInterface = RetrofitClient.instance.create(PinInterface::class.java)
 
-        // 액세스 토큰 (예시로 하드코딩) 수정해야함!!!!!!!!!!!!!!!!!
-//        val accessToken = "your_access_token_here"
-
-        val spf = getSharedPreferences("user_data", MODE_PRIVATE)
-        val userId = spf.getString("user_id", "")
-        val userName = spf.getString("user_name", "")
-        val userEmail = spf.getString("user_email", "")
-        val accessToken = spf.getString("accessToken", "")
-
-        Log.d("MapActivity", "User Name: $userName")
-        Log.d("MapActivity", "User Email: $userEmail")
-        Log.d("MapActivity", "User Id: $userId")
-        Log.d("MapActivity", "accessToken: $accessToken")
-
-        // API 호출
-        fetchLocations(accessToken)
+        //userId 가져오기
+        val spf = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        val userId = spf.getInt("USER_ID", 0)
+        Log.d("MapActivity", "USER_ID in MainActivity: $userId")
 
         binding.btnRegister.setOnClickListener {
             unsavedLabel?.let { label ->
                 val intent = Intent(this, MemoryPostActivity::class.java).apply {
-                    putExtra("lat", label.position.latitude)
-                    putExtra("lng", label.position.longitude)
-
-                    val spf = getSharedPreferences("map_location", MODE_PRIVATE)
-                    val editor = spf.edit()
-                    editor.putString("lat", label.position.latitude.toString())
-                    editor.putString("lng", label.position.longitude.toString())
-                    editor.apply()
                 }
                 startActivity(intent)
                 clearUnsavedLabel() // 라벨 초기화
@@ -88,7 +68,7 @@ class MapActivity: AppCompatActivity()  {
         initializeMap()
     }
 
-    //API 호출
+    //API 호출 - 저장된 핀 호출
     private fun fetchLocations(accessToken: String?) {
         val call = pinInterface.getLocations("accessToken $accessToken")
 
@@ -99,7 +79,7 @@ class MapActivity: AppCompatActivity()  {
                     if (pinResponse != null && pinResponse.success) {
                         // 성공적으로 데이터를 받았을 경우
                         pinResponse.locations.forEachIndexed { index, location ->
-                            Log.d("Location", "위치 $index: 위도: ${location.lat}, 경도: ${location.lng}")
+                            Log.d("Location", "위치 $index: 위도: ${location.latitude}, 경도: ${location.longitude}")
 
                             val styles = kakaoMap?.labelManager?.addLabelStyles(
                                 LabelStyles.from(
@@ -107,7 +87,7 @@ class MapActivity: AppCompatActivity()  {
                                 )
                             )
                             // 지도에 위치 추가
-                            val options = LabelOptions.from(LatLng.from(location.lat, location.lng)).setStyles(styles)
+                            val options = LabelOptions.from(LatLng.from(location.latitude, location.longitude)).setStyles(styles)
                             val layer = kakaoMap?.labelManager?.layer
 
                             if (layer != null) {
@@ -122,7 +102,6 @@ class MapActivity: AppCompatActivity()  {
                     Log.e("API", "응답 실패: ${response.code()}")
                 }
             }
-
             override fun onFailure(call: Call<PinResponse>, t: Throwable) {
                 Log.e("API", "API 호출 실패", t)
             }
@@ -158,6 +137,7 @@ class MapActivity: AppCompatActivity()  {
         })
     }
 
+    // 지도 시작 설정
     private fun setupMap() {
         val position = LatLng.from(37.44983420181418,127.12727640486801)
         val cameraUpdate = CameraUpdateFactory.newCenterPosition(position,15)
@@ -169,10 +149,10 @@ class MapActivity: AppCompatActivity()  {
         }
     }
 
+    // 핀 추가
     private fun addLabel(position: LatLng) {
         // 기존 임시 라벨 제거
         unsavedLabel?.remove()
-
         val styles = kakaoMap?.labelManager?.addLabelStyles(
             LabelStyles.from(
                 LabelStyle.from(R.drawable.ic_pin).setAnchorPoint(0.5f, 1.0f)
@@ -187,30 +167,31 @@ class MapActivity: AppCompatActivity()  {
             label.show()
             unsavedLabel = label // 새로 생성된 라벨을 임시 라벨로 설정
 
-
             // btnRegister 활성화 및 색 변경
             binding.btnRegister.isEnabled = true
             binding.btnRegister.setBackgroundColor(ContextCompat.getColor(this, R.color.P500))
-
 
             kakaoMap?.setOnLabelClickListener { map, labelLayer, clickedLabel ->
                 initLabelClickListener(map, labelLayer, clickedLabel)
                 true
             }
+            val spfLoc = getSharedPreferences("map_location", MODE_PRIVATE)
+            val editor = spfLoc.edit()
+            editor.putString("latitude", label.position.latitude.toString())
+            editor.putString("longitude", label.position.longitude.toString())
+            editor.apply()
         }
     }
 
+    // 핀 클릭시 반응
     private fun initLabelClickListener(kakaoMap: KakaoMap, layer: LabelLayer, label: Label) {
         Log.d("onLabelClicked", "Clicked Label Position: ${label.position}")
 
-        val latitude = label.position.latitude // Label의 위도
-        val longitude = label.position.longitude // Label의 경도
+        val spf = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        val userId = spf.getInt("USER_ID", 0)
 
         val popupActivity = PopupActivity(this)
-        popupActivity.showPopup(binding.root, latitude, longitude) {
-            // 버튼 클릭 후 처리할 로직
-            val intent = Intent(this, MemoryPostActivity::class.java)
-            startActivity(intent)
+        popupActivity.showPopup(binding.root, userId) {
         }
     }
 
@@ -219,7 +200,7 @@ class MapActivity: AppCompatActivity()  {
         unsavedLabel?.remove()
         unsavedLabel = null
         binding.btnRegister.isEnabled = false
-        binding.btnRegister.setBackgroundColor(ContextCompat.getColor(this, R.color.G000))
+        binding.btnRegister.setBackgroundColor(ContextCompat.getColor(this, R.color.G300))
     }
 
 
