@@ -233,8 +233,6 @@ class MapActivity: AppCompatActivity()  {
         })
     }
 
-
-
     private fun clearUnsavedLabel() {
         unsavedLabel?.remove()
         unsavedLabel = null
