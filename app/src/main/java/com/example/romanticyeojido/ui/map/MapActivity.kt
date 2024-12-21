@@ -11,7 +11,8 @@ import com.example.romanticyeojido.R
 import com.example.romanticyeojido.databinding.ActivityMapBinding
 import com.example.romanticyeojido.network.PinInterface
 import com.example.romanticyeojido.network.PinResponse
-import com.example.romanticyeojido.network.getRetrofit
+import com.example.romanticyeojido.network.NaverAuthInterface
+import com.example.romanticyeojido.network.RetrofitClient
 import com.example.romanticyeojido.ui.memoryPost.MemoryPostActivity
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -44,7 +45,7 @@ class MapActivity: AppCompatActivity()  {
         binding.btnRegister.isEnabled = false
 
         // PinInterface 초기화
-        pinInterface = getRetrofit().create(PinInterface::class.java)
+        pinInterface = RetrofitClient.instance.create(PinInterface::class.java)
 
         // 액세스 토큰 (예시로 하드코딩) 수정해야함!!!!!!!!!!!!!!!!!
         val accessToken = "your_access_token_here"

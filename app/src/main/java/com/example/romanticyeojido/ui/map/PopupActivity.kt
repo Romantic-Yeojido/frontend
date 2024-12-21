@@ -8,10 +8,12 @@ import android.widget.PopupWindow
 import com.bumptech.glide.Glide
 import com.example.romanticyeojido.R
 import com.example.romanticyeojido.databinding.ItemMappopupBinding
-import com.example.romanticyeojido.network.BASE_URL
+//import com.example.romanticyeojido.network.BASE_URL
 import com.example.romanticyeojido.network.MemoryInterface
 import com.example.romanticyeojido.network.PopupResponse
-import com.example.romanticyeojido.network.getRetrofit
+import com.example.romanticyeojido.network.RetrofitClient
+import com.example.romanticyeojido.network.RetrofitClient.BASE_URL
+//import com.example.romanticyeojido.network.getRetrofit
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -44,7 +46,7 @@ class PopupActivity (private val context: Context) {
     }
 
     private fun getPopupData(binding: ItemMappopupBinding, latitude: Double, longitude: Double) {
-        val apiService = getRetrofit().create(MemoryInterface::class.java)
+        val apiService = RetrofitClient.instance.create(MemoryInterface::class.java)
         apiService.getPopupData(latitude, longitude).enqueue(object : Callback<PopupResponse> {
             override fun onResponse(call: Call<PopupResponse>, response: Response<PopupResponse>) {
                 if (response.isSuccessful && response.body()?.success == true) {
