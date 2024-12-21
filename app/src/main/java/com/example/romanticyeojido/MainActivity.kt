@@ -24,9 +24,16 @@ class MainActivity : AppCompatActivity() {
         val keyHash = Utility.getKeyHash(this)
         Log.d("Hash", keyHash)
 
-        val userName = intent.getStringExtra("USER_NAME")
-        val userEmail = intent.getStringExtra("USER_EMAIL")
-        val userId = intent.getStringExtra("USER_ID")
+//        val userName = intent.getStringExtra("USER_NAME")
+//        val userEmail = intent.getStringExtra("USER_EMAIL")
+//        val userId = intent.getStringExtra("USER_ID")
+
+        val spf = getSharedPreferences("user_data", MODE_PRIVATE)
+        val userId = spf.getString("user_id", "")
+        val userName = spf.getString("user_name", "")
+        val userEmail = spf.getString("user_email", "")
+        val accessToken = spf.getString("accessToken", "")
+
 
         val isApiSuccess = intent.getBooleanExtra("API_SUCCESS", false)  // 기본값은 false
 
@@ -39,6 +46,7 @@ class MainActivity : AppCompatActivity() {
         Log.d("MainActivity", "User Name: $userName")
         Log.d("MainActivity", "User Email: $userEmail")
         Log.d("MainActivity", "User Id: $userId")
+        Log.d("MainActivity", "accessToken: $accessToken")
 
         initOnClickListener()
     }

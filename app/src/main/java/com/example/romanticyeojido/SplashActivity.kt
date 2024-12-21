@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.romanticyeojido.databinding.ActivityMainBinding
 import com.example.romanticyeojido.databinding.ActivitySplashBinding
+import com.example.romanticyeojido.network.AccessTokenManager
 import com.example.romanticyeojido.network.AuthResponse
 import com.example.romanticyeojido.network.NaverAuthInterface
 import com.example.romanticyeojido.network.RetrofitClient
@@ -22,6 +23,7 @@ import com.kakao.sdk.user.UserApiClient
 import com.kakao.sdk.user.model.User
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin
+import com.navercorp.nid.oauth.NidOAuthPreferencesManager.accessToken
 import com.navercorp.nid.oauth.OAuthLoginCallback
 import com.navercorp.nid.profile.NidProfileCallback
 import com.navercorp.nid.profile.data.NidProfileResponse
@@ -33,6 +35,8 @@ class SplashActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySplashBinding
 
     private val TAG = this.javaClass.simpleName
+
+    val BASE_URL = "http://3.37.26.60:3000"
 
     private var userId: String = ""
     private var email: String = ""
@@ -50,6 +54,13 @@ class SplashActivity : AppCompatActivity() {
 //            finish()
 //        }, 2000)
 
+//        NaverIdLoginSDK.initialize(
+//            this@SplashActivity,
+//            BuildConfig.NAVER_CLIENT_ID,
+//            BuildConfig.NAVER_CLIENT_SECRET,
+//            "낭만여지도"
+//        )
+
         val keyHash = Utility.getKeyHash(this)
         Log.d("KeyHash", keyHash ?: "Key hash not found")
 
@@ -58,84 +69,225 @@ class SplashActivity : AppCompatActivity() {
         }
 
         KakaoSdk.init(this, BuildConfig.NATIVE_APP_KEY)
-        NaverLoginLogic()
+
+
+        binding.naverLoginBtn.setOnClickListener {
+//            NaverLoginLogic()
+//            fetchAuthUrlFromServer()
+            //handleNaverLogin()
+            redirectToLoginPage()
+        }
+
    }
 
-    private fun NaverLoginLogic() {
-        binding.run {
-            naverLoginBtn.setOnClickListener {
-                val oAuthLoginCallback = object : OAuthLoginCallback {
-                    override fun onSuccess() {
-                        // 네이버 로그인 API 호출 성공 시 유저 정보를 가져온다
-                        NidOAuthLogin().callProfileApi(object :
-                            NidProfileCallback<NidProfileResponse> {
-                            override fun onSuccess(result: NidProfileResponse) {
-                                userId = result.profile?.id.toString() //네이버에서 제공하는 고유 id
-                                name = result.profile?.name.toString()
-                                email = result.profile?.email.toString()
+    private fun redirectToLoginPage() {
+        val loginUrl = "http://3.37.26.60:3000/api/v1/users/oauth2/login/naver"
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(loginUrl))
+        startActivity(intent)
+        finish()
+    }
+
+//    private fun handleNaverLogin() {
+//        NaverIdLoginSDK.initialize(
+//            this@SplashActivity,
+//            BuildConfig.NAVER_CLIENT_ID,
+//            BuildConfig.NAVER_CLIENT_SECRET,
+//            "낭만여지도"
+//        )
+
+//        val oAuthLoginCallback = object : OAuthLoginCallback {
+//            override fun onSuccess() {
+//                // AccessToken 가져오기
+//                val accessToken = NaverIdLoginSDK.getAccessToken()
+//                if (accessToken.isNullOrEmpty()) {
+//                    Log.e(TAG, "AccessToken is null or empty")
+//                    Toast.makeText(this@SplashActivity, "로그인 실패: 유효한 토큰을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
+//                    return
+//                }
+//
+//                Log.d(TAG, "Successfully retrieved access token: $accessToken")
+//
+//                // 사용자 프로필 정보 가져오기
+//                NidOAuthLogin().callProfileApi(object : NidProfileCallback<NidProfileResponse> {
+//                    override fun onSuccess(result: NidProfileResponse) {
+//                        val profile = result.profile
+//                        if (profile != null) {
+//                            val userId = profile.id.toString()
+//                            val name = profile.name.toString()
+//                            val email = profile.email.toString()
+//
+//                            Log.d(TAG, "네이버 로그인한 유저 정보 - User ID: $userId, 이름: $name, 이메일: $email")
+//
+//                            // SharedPreferences에 저장
+//                            val spf = getSharedPreferences("user_data", MODE_PRIVATE)
+//                            with(spf.edit()) {
+//                                putString("accessToken", accessToken)
+//                                putString("user_id", userId)
+//                                putString("user_name", name)
+//                                putString("user_email", email)
+//                                apply()
+//                            }
+//
+//                            // 서버로 Auth URL 요청
+//                            fetchAuthUrlFromServer()
+//                        } else {
+//                            Log.e(TAG, "Profile is null")
+//                        }
+//                    }
+//
+//                    override fun onError(errorCode: Int, message: String) {
+//                        Log.e(TAG, "Profile API Error: $message")
+//                    }
+//
+//                    override fun onFailure(httpStatus: Int, message: String) {
+//                        Log.e(TAG, "Profile API Failure: $message")
+//                    }
+//                })
+//            }
+//
+//            override fun onError(errorCode: Int, message: String) {
+//                Log.e(TAG, "OAuth Login Error: $message (Error Code: $errorCode)")
+//            }
+//
+//            override fun onFailure(httpStatus: Int, message: String) {
+//                Log.e(TAG, "OAuth Login Failure: $message (HTTP Status: $httpStatus)")
+//            }
+//        }
+
+        // 네이버 인증 요청
+//        NaverIdLoginSDK.authenticate(this@SplashActivity, fetchAuthUrlFromServer())
+//    }
+
+    private fun fetchAuthUrlFromServer() {
+        NaverIdLoginSDK.initialize(
+            this@SplashActivity,
+            BuildConfig.NAVER_CLIENT_ID,
+            BuildConfig.NAVER_CLIENT_SECRET,
+            "낭만여지도"
+        )
+
+        // 네이버 인증 요청
+        //NaverIdLoginSDK.authenticate(this@SplashActivity, fetchAuthUrlFromServer())
+
+        Log.d(TAG, "Fetching Auth URL with AccessToken: $accessToken")
+
+        RetrofitClient.instance.create(NaverAuthInterface::class.java).getAuthUrl(
+            token = "Bearer $accessToken"
+        ).enqueue(object : retrofit2.Callback<AuthResponse> {
+            override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
+                if (response.isSuccessful) {
+                    val authResponse = response.body()
+                    authResponse?.let {
+                        Log.d(TAG, "Auth URL: ${it.auth_url}")
+                        Log.d(TAG, "State: ${it.state}")
+
+                        // 브라우저로 URL 열기
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(it.auth_url))
+                        startActivity(intent)
+                    }
+                } else {
+                    Log.e(TAG, "Server Error: ${response.code()}")
+                    val errorBody = response.errorBody()?.string()
+                    Log.e(TAG, "Response Body: $errorBody")
+                }
+            }
+
+            override fun onFailure(call: Call<AuthResponse>, t: Throwable) {
+                Log.e(TAG, "Network Failure: ${t.message}")
+            }
+        })
+    }
 
 
-                                val accessToken = NaverIdLoginSDK.getAccessToken()
-                                Log.d(TAG, "accessToken: $accessToken")
-
+//    private fun NaverLoginLogic() {
+//                val oAuthLoginCallback = object : OAuthLoginCallback {
+//                    override fun onSuccess() {
+//                        // 네이버 로그인 API 호출 성공 시 유저 정보를 가져온다
+//                        NidOAuthLogin().callProfileApi(object :
+//                            NidProfileCallback<NidProfileResponse> {
+//                            override fun onSuccess(result: NidProfileResponse) {
+//                                userId = result.profile?.id.toString() //네이버에서 제공하는 고유 id
+//                                name = result.profile?.name.toString()
+//                                email = result.profile?.email.toString()
+//
+//
+//                                val accessToken = NaverIdLoginSDK.getAccessToken()
+//                                Log.d(TAG, "accessToken: $accessToken")
+//
+//                                AccessTokenManager.setAccessToken(accessToken)
+//
 //                                if (!accessToken.isNullOrEmpty()) {
 //                                    fetchAuthUrlFormServer(accessToken)
 //                                } else {
 //                                    Log.e(TAG, "AccessToken is null or empty")
 //                                }
-
-                                Log.e(TAG, "네이버 로그인한 유저 정보 - User ID : $userId")
-                                Log.e(TAG, "네이버 로그인한 유저 정보 - 이름 : $name")
-                                Log.e(TAG, "네이버 로그인한 유저 정보 - 이메일 : $email")
-                                Log.d(TAG, "Context: ${this@SplashActivity}")
-                                Log.d(TAG, "Client ID: ${BuildConfig.NAVER_CLIENT_ID}")
-                                Log.d(TAG, "Client Secret: ${BuildConfig.NAVER_CLIENT_SECRET}")
-
-                                // MainActivity로 유저 정보를 전달
-                                val intent = Intent(this@SplashActivity, MainActivity::class.java)
-                                intent.putExtra("USER_ID", userId)
-                                intent.putExtra("USER_NAME", name)
-                                intent.putExtra("USER_EMAIL", email)
-                                startActivity(intent)
-                                finish()
-                            }
-
-                            override fun onError(errorCode: Int, message: String) {
-                                Log.e(TAG, "Naver Profile API Error: $message")
-                            }
-
-                            override fun onFailure(httpStatus: Int, message: String) {
-                                Log.e(TAG, "Naver Profile API Failure: $message")
-                            }
-                        })
-                    }
-
-                    override fun onError(errorCode: Int, message: String) {
-                        val naverAccessToken = NaverIdLoginSDK.getAccessToken()
-                        Log.e(TAG, "naverAccessToken : $naverAccessToken")
-                    }
-
-                    override fun onFailure(httpStatus: Int, message: String) {
-                        Log.e(TAG, "Naver Login Failure: $message")
-                    }
-                }
-
-                NaverIdLoginSDK.initialize(
-                    this@SplashActivity,
-                    BuildConfig.NAVER_CLIENT_ID,
-                    BuildConfig.NAVER_CLIENT_SECRET,
-                    "낭만여지도"
-                )
-                NaverIdLoginSDK.authenticate(this@SplashActivity, oAuthLoginCallback)
-            }
-        }
-    }
-
-//    private fun fetchAuthUrlFormServer(accessToken: String) {
-//        Log.d(TAG, "fetchAuthUrlFormServer called with accessToken: $accessToken")
-//        val naverApiService = RetrofitClient.instance.create(NaverAuthInterface::class.java)
 //
-//        naverApiService.getAuthUrl(
+//                                Log.e(TAG, "네이버 로그인한 유저 정보 - User ID : $userId")
+//                                Log.e(TAG, "네이버 로그인한 유저 정보 - 이름 : $name")
+//                                Log.e(TAG, "네이버 로그인한 유저 정보 - 이메일 : $email")
+//                                Log.d(TAG, "Context: ${this@SplashActivity}")
+//                                Log.d(TAG, "Client ID: ${BuildConfig.NAVER_CLIENT_ID}")
+//                                Log.d(TAG, "Client Secret: ${BuildConfig.NAVER_CLIENT_SECRET}")
+//
+//                                // MainActivity로 유저 정보를 전달
+//                                val intent = Intent(this@SplashActivity, MainActivity::class.java)
+////                                intent.putExtra("USER_ID", userId)
+////                                intent.putExtra("USER_NAME", name)
+////                                intent.putExtra("USER_EMAIL", email)
+//
+//                                val spf = getSharedPreferences("user_data", MODE_PRIVATE)
+//                                val editor = spf.edit()
+//                                editor.putString("accessToken", accessToken)
+//                                editor.putString("user_id", userId)
+//                                editor.putString("user_name", name)
+//                                editor.putString("user_email", email)
+//                                editor.apply()
+//
+//                                startActivity(intent)
+//                                finish()
+//                            }
+//
+//                            override fun onError(errorCode: Int, message: String) {
+//                                Log.e(TAG, "Naver Profile API Error: $message")
+//                            }
+//
+//                            override fun onFailure(httpStatus: Int, message: String) {
+//                                Log.e(TAG, "Naver Profile API Failure: $message")
+//                            }
+//                        })
+//                    }
+//
+//                    override fun onError(errorCode: Int, message: String) {
+//                        val naverAccessToken = NaverIdLoginSDK.getAccessToken()
+//                        Log.e(TAG, "naverAccessToken : $naverAccessToken")
+//                    }
+//
+//                    override fun onFailure(httpStatus: Int, message: String) {
+//                        Log.e(TAG, "Naver Login Failure: $message")
+//                    }
+//                }
+//
+//                NaverIdLoginSDK.initialize(
+//                    this@SplashActivity,
+//                    BuildConfig.NAVER_CLIENT_ID,
+//                    BuildConfig.NAVER_CLIENT_SECRET,
+//                    "낭만여지도"
+//                )
+//                NaverIdLoginSDK.authenticate(this@SplashActivity, oAuthLoginCallback)
+//    }
+//
+//    private fun fetchAuthUrlFormServer(accessToken: String?) {
+//
+//        if (accessToken.isNullOrEmpty()) {
+//            Log.e(TAG, "AccessToken is null or empty")
+//            return
+//        }
+//
+//        Log.d(TAG, "fetchAuthUrlFormServer called with accessToken: $accessToken")
+//
+//        //val naverApiService = RetrofitClient.instance.create(NaverAuthInterface::class.java)
+//
+//        RetrofitClient.instance.create(NaverAuthInterface::class.java).getAuthUrl(
 //            token = "Bearer $accessToken"
 //        ).enqueue(object : retrofit2.Callback<AuthResponse>{
 //            override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
@@ -168,7 +320,8 @@ class SplashActivity : AppCompatActivity() {
 //            }
 //        })
 //
-//        intent.putExtra("API_SUCCESS", true)
+////        intent.putExtra("API_SUCCESS", true)
+//
 //    }
 
     private fun kakaoLogin() {
@@ -205,7 +358,7 @@ class SplashActivity : AppCompatActivity() {
                 }
             }
             else if (token != null) {
-                Log.d("token", token.accessToken)
+                Log.d("kakao-token", token.accessToken)
                 val spf = getSharedPreferences("auth3", MODE_PRIVATE)
                 val editor = spf.edit()
                 editor.putString("kakao_token", token.accessToken)

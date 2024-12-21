@@ -48,7 +48,18 @@ class MapActivity: AppCompatActivity()  {
         pinInterface = RetrofitClient.instance.create(PinInterface::class.java)
 
         // 액세스 토큰 (예시로 하드코딩) 수정해야함!!!!!!!!!!!!!!!!!
-        val accessToken = "your_access_token_here"
+//        val accessToken = "your_access_token_here"
+
+        val spf = getSharedPreferences("user_data", MODE_PRIVATE)
+        val userId = spf.getString("user_id", "")
+        val userName = spf.getString("user_name", "")
+        val userEmail = spf.getString("user_email", "")
+        val accessToken = spf.getString("accessToken", "")
+
+        Log.d("MapActivity", "User Name: $userName")
+        Log.d("MapActivity", "User Email: $userEmail")
+        Log.d("MapActivity", "User Id: $userId")
+        Log.d("MapActivity", "accessToken: $accessToken")
 
         // API 호출
         fetchLocations(accessToken)
@@ -58,6 +69,12 @@ class MapActivity: AppCompatActivity()  {
                 val intent = Intent(this, MemoryPostActivity::class.java).apply {
                     putExtra("lat", label.position.latitude)
                     putExtra("lng", label.position.longitude)
+
+                    val spf = getSharedPreferences("map_location", MODE_PRIVATE)
+                    val editor = spf.edit()
+                    editor.putString("lat", label.position.latitude.toString())
+                    editor.putString("lng", label.position.longitude.toString())
+                    editor.apply()
                 }
                 startActivity(intent)
                 clearUnsavedLabel() // 라벨 초기화
@@ -72,7 +89,7 @@ class MapActivity: AppCompatActivity()  {
     }
 
     //API 호출
-    private fun fetchLocations(accessToken: String) {
+    private fun fetchLocations(accessToken: String?) {
         val call = pinInterface.getLocations("accessToken $accessToken")
 
         call.enqueue(object : Callback<PinResponse> {

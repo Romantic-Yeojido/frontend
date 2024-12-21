@@ -9,7 +9,7 @@ import com.bumptech.glide.Glide
 import com.example.romanticyeojido.R
 import com.example.romanticyeojido.databinding.ItemMappopupBinding
 //import com.example.romanticyeojido.network.BASE_URL
-import com.example.romanticyeojido.network.MemoryInterface
+import com.example.romanticyeojido.network.memoryPost.MemoryInterface
 import com.example.romanticyeojido.network.PopupResponse
 import com.example.romanticyeojido.network.RetrofitClient
 import com.example.romanticyeojido.network.RetrofitClient.BASE_URL

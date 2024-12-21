@@ -1,5 +1,6 @@
-package com.example.romanticyeojido.network
+package com.example.romanticyeojido.network.memoryPost
 
+import com.example.romanticyeojido.network.PopupResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
