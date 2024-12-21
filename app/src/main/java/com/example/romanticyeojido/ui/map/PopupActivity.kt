@@ -58,6 +58,9 @@ class PopupActivity (private val context: Context) {
             override fun onResponse(call: Call<PopupResponse>, response: Response<PopupResponse>) {
                 if (response.isSuccessful && response.body()?.success == true) {
                     response.body()?.memory?.let { memory ->
+                    // 성공 로그 추가
+                        Log.d("PopupData", "데이터를 성공적으로 불러왔습니다: ${memory.title}, 방문일: ${memory.visit_date}, 친구: ${memory.friends}")
+
                         binding.tvPopupTitle.text = memory.title
                         binding.tvPopupDate.text = "방문일: ${memory.visit_date} / 친구: ${memory.friends}"
                         binding.tvPopupDescription.text = memory.gpt_summary
@@ -66,6 +69,14 @@ class PopupActivity (private val context: Context) {
                             .into(binding.imgPopup)
                     }
                 } else {
+                    // 응답이 성공적이지 않은 경우에 대한 로그 추가
+                    if (response.body() == null) {
+                        Log.e("PopupData", "서버 응답 본문이 null입니다. 응답 코드: ${response.code()}")
+                    } else {
+                        Log.e("PopupData", "서버에서 응답했지만 실패했습니다. 응답 코드: ${response.code()}, 성공 여부: ${response.body()?.success}")
+                    }
+
+                    // 사용자에게 표시할 메시지
                     binding.tvPopupTitle.text = "데이터를 불러오는 중."
                     binding.tvPopupDate.text = "데이터를 불러오는 중."
                     binding.tvPopupDescription.text = "데이터를 불러오는 중."
@@ -73,6 +84,9 @@ class PopupActivity (private val context: Context) {
             }
 
             override fun onFailure(call: Call<PopupResponse>, t: Throwable) {
+                // API 호출 실패에 대한 로그 추가
+                Log.e("PopupData", "API 호출 중 오류 발생: ${t.message}")
+
                 binding.tvPopupTitle.text = "데이터를 불러올 수 없습니다."
                 binding.tvPopupDate.text = "데이터를 불러올 수 없습니다."
                 binding.tvPopupDescription.text = "데이터를 불러올 수 없습니다."
