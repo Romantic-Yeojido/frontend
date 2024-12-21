@@ -207,7 +207,6 @@ class MapActivity: AppCompatActivity()  {
         }
     }
 
-
     private fun sendNewPin(userId: Int, latitude: String?, longitude: String?) {
         val apiService = RetrofitClient.instance.create(NewpinInterface::class.java)
         val newpinRequest = NewpinRequest(
@@ -232,7 +231,6 @@ class MapActivity: AppCompatActivity()  {
             }
         })
     }
-
     private fun clearUnsavedLabel() {
         unsavedLabel?.remove()
         unsavedLabel = null
