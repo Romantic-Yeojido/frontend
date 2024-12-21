@@ -14,9 +14,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat.startActivityForResult
 import com.example.romanticyeojido.R
 import com.example.romanticyeojido.databinding.ActivityMemoryPostBinding
+import com.example.romanticyeojido.network.RetrofitClient
+import com.example.romanticyeojido.network.memoryPost.MemoryRequest
+import com.example.romanticyeojido.network.memoryPost.MemoryResponse
+import com.example.romanticyeojido.network.memoryPost.MemoryService
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.ShapeAppearanceModel
+import retrofit2.Call
 
 class MemoryPostActivity: AppCompatActivity() {
 
@@ -43,8 +48,17 @@ class MemoryPostActivity: AppCompatActivity() {
 
         //좌표값 받기
         val intent = intent
-        lat = intent.getDoubleExtra("lat", 0.0)
-        lng = intent.getDoubleExtra("lng", 0.0)
+//        lat = intent.getDoubleExtra("lat", 0.0)
+//        lng = intent.getDoubleExtra("lng", 0.0)
+
+
+
+        val spf = getSharedPreferences("map_location", MODE_PRIVATE)
+        val lat = spf.getString("lat", "")
+        val lng = spf.getString("lng", "")
+
+        Log.d("MemoryPostActivity", "lat: $lat")
+        Log.d("MemoryPostActivity", "lng: $lng")
 
         if (lat != null && lng != null) {
             Log.d("MemoryPostActivity", "위도: $lat, 경도: $lng")
@@ -136,6 +150,7 @@ class MemoryPostActivity: AppCompatActivity() {
             // 버튼 클릭 시 유효성 검사 실행
             validateInputs()
             if (binding.postRegisterBtn.isEnabled == true) {
+                postMemory()
                 finish()
             }
         }
@@ -291,4 +306,39 @@ class MemoryPostActivity: AppCompatActivity() {
     }
 
     private fun Int.dpToPx(): Int = (this * resources.displayMetrics.density).toInt()
+
+    private fun postMemory() {
+        val userId = 1 // 실제 사용자 ID로 변경
+        val locationId = 1 // 실제 위치 ID로 변경
+
+        val title = binding.postTitleEt.text.toString()
+        val visitDate = "${binding.postYearOptionDd.selectedItem}-${binding.postMonthOptionDd.selectedItem}-${binding.postDayOptionDd.selectedItem}"
+        val friends = binding.postPeopleEt.text.toString()
+        val content = binding.postContentEt.text.toString()
+
+        val memoryRequest = MemoryRequest(
+            title = title,
+            visit_date = visitDate,
+            friends = friends,
+            content = content
+        )
+
+        val memoryService = RetrofitClient.instance.create(MemoryService::class.java)
+        memoryService.postMemory(userId, locationId, memoryRequest).enqueue(object : retrofit2.Callback<MemoryResponse> {
+            override fun onResponse(call: Call<MemoryResponse>, response: retrofit2.Response<MemoryResponse>) {
+                if (response.isSuccessful) {
+                    val result = response.body()?.result
+                    Log.d("MemoryPostActivity", "추억 등록 성공: $result")
+                    // 성공 알림 또는 화면 이동 처리
+                } else {
+                    Log.e("MemoryPostActivity", "추억 등록 실패: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<MemoryResponse>, t: Throwable) {
+                Log.e("MemoryPostActivity", "추억 등록 에러: ${t.message}")
+            }
+        })
+    }
+
 }
