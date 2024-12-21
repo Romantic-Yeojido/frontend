@@ -1,4 +1,4 @@
-package com.example.romanticyeojido.network
+package com.example.romanticyeojido.network.locker
 
 data class Photo(
     val id: Int,

@@ -1,4 +1,4 @@
-package com.example.romanticyeojido.network
+package com.example.romanticyeojido.ui
 
 import android.app.Dialog
 import android.content.Context

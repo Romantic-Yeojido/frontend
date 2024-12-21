@@ -1,4 +1,4 @@
-package com.example.romanticyeojido.network
+package com.example.romanticyeojido.network.map
 
 
 data class PopupResponse(

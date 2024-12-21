@@ -6,17 +6,13 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
 import com.example.romanticyeojido.R
 import com.example.romanticyeojido.databinding.ActivityMapBinding
-import com.example.romanticyeojido.network.PinInterface
-import com.example.romanticyeojido.network.PinResponse
-import com.example.romanticyeojido.network.NaverAuthInterface
-import com.example.romanticyeojido.network.NewpinInterface
-import com.example.romanticyeojido.network.NewpinRequest
-import com.example.romanticyeojido.network.NewpinResponse
-import com.example.romanticyeojido.network.PopupInterface
-import com.example.romanticyeojido.network.PopupResponse
+import com.example.romanticyeojido.network.map.PinInterface
+import com.example.romanticyeojido.network.map.PinResponse
+import com.example.romanticyeojido.network.map.NewpinInterface
+import com.example.romanticyeojido.network.map.NewpinRequest
+import com.example.romanticyeojido.network.map.NewpinResponse
 import com.example.romanticyeojido.network.RetrofitClient
 import com.example.romanticyeojido.ui.memoryPost.MemoryPostActivity
 import com.kakao.vectormap.KakaoMap
@@ -74,35 +70,49 @@ class MapActivity: AppCompatActivity()  {
             finish()
         }
 
+        //  val locationId = intent.getIntExtra("locationId", 0)
+        //   val title = intent.getStringExtra("title")
+        //    val visit_date = intent.getStringExtra("visit_date")
+        // val content = intent.getStringExtra("content")
+        //  val friends = intent.getStringExtra("friends")
+        //      val summary = intent.getStringExtra("summary")
+
+        //       Log.d("MapActivity", "받은 memory_data: $locationId, $title, $visit_date, $content, $friends, $summary")
+
         initializeMap()
+        fetchLocations(userId)
     }
 
     //API 호출 - 저장된 핀 호출
-    private fun fetchLocations(accessToken: String?) {
-        val call = pinInterface.getLocations("accessToken $accessToken")
+    private fun fetchLocations(userId: Int) {
+        val call = pinInterface.getLocations(userId)
 
         call.enqueue(object : Callback<PinResponse> {
             override fun onResponse(call: Call<PinResponse>, response: Response<PinResponse>) {
                 if (response.isSuccessful) {
                     val pinResponse = response.body()
                     if (pinResponse != null && pinResponse.success) {
-                        // 성공적으로 데이터를 받았을 경우
-                        pinResponse.locations.forEachIndexed { index, location ->
-                            Log.d("Location", "위치 $index: 위도: ${location.latitude}, 경도: ${location.longitude}")
+                        // locations가 null이 아닌지 확인
+                        if (pinResponse.locations != null) {
+                            pinResponse.locations.forEachIndexed { index, location ->
+                                Log.d("Location", "위치 $index: 위도: ${location.latitude}, 경도: ${location.longitude}")
 
-                            val styles = kakaoMap?.labelManager?.addLabelStyles(
-                                LabelStyles.from(
-                                    LabelStyle.from(R.drawable.ic_pin_gray).setAnchorPoint(0.5f, 1.0f)
+                                val styles = kakaoMap?.labelManager?.addLabelStyles(
+                                    LabelStyles.from(
+                                        LabelStyle.from(R.drawable.ic_pin_gray).setAnchorPoint(0.5f, 1.0f)
+                                    )
                                 )
-                            )
-                            // 지도에 위치 추가
-                            val options = LabelOptions.from(LatLng.from(location.latitude, location.longitude)).setStyles(styles)
-                            val layer = kakaoMap?.labelManager?.layer
+                                // 지도에 위치 추가
+                                val options = LabelOptions.from(LatLng.from(location.latitude, location.longitude)).setStyles(styles)
+                                val layer = kakaoMap?.labelManager?.layer
 
-                            if (layer != null) {
-                                val label = layer.addLabel(options)
-                                label.show()
+                                if (layer != null) {
+                                    val label = layer.addLabel(options)
+                                    label.show()
+                                }
                             }
+                        } else {
+                            Log.d("API", "위치 정보가 없습니다.")
                         }
                     } else {
                         Log.d("API", "응답이 성공적이지 않음")
@@ -111,6 +121,7 @@ class MapActivity: AppCompatActivity()  {
                     Log.e("API", "응답 실패: ${response.code()}")
                 }
             }
+
             override fun onFailure(call: Call<PinResponse>, t: Throwable) {
                 Log.e("API", "API 호출 실패", t)
             }
@@ -222,6 +233,17 @@ class MapActivity: AppCompatActivity()  {
                     } else {
                         Log.e("NewpinAPI", "응답이 성공적이지 않음")
                     }
+
+                    val locationId = pinResponse!!.result.locationId
+                    Log.d("NewPinAPI", "핀 정보 전송 성공, LocationId: , $locationId")
+
+                    val spf = getSharedPreferences("MapPreferences", MODE_PRIVATE)
+                    val editor = spf.edit()
+                    editor.putInt("locationId", locationId)
+                    editor.apply()
+
+                    clearUnsavedLabel()
+
                 } else {
                     Log.e("NewpinAPI", "핀 정보 전송 실패: ${response.code()}")
                 }

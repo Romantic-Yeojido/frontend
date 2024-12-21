@@ -4,10 +4,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.viewpager2.widget.ViewPager2
 import androidx.recyclerview.widget.RecyclerView
 import com.example.romanticyeojido.R
-import com.example.romanticyeojido.network.Photo
+import com.example.romanticyeojido.network.locker.Photo
 import com.squareup.picasso.Picasso
 
 class PhotoPagerAdapter(private val photoList: List<Photo>) : RecyclerView.Adapter<PhotoPagerAdapter.PhotoPagerViewHolder>() {

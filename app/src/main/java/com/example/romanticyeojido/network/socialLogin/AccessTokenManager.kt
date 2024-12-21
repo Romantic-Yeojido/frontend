@@ -1,4 +1,4 @@
-package com.example.romanticyeojido.network
+package com.example.romanticyeojido.network.socialLogin
 
 object AccessTokenManager {
     private var accessToken: String? = null

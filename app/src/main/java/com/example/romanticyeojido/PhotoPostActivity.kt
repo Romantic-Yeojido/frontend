@@ -7,9 +7,9 @@ import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
-import com.example.romanticyeojido.network.Photo
-import com.example.romanticyeojido.network.PhotoInterface
-import com.example.romanticyeojido.network.convertUriToMultipartBody
+import com.example.romanticyeojido.network.locker.Photo
+import com.example.romanticyeojido.network.locker.PhotoInterface
+import com.example.romanticyeojido.network.locker.convertUriToMultipartBody
 import com.example.romanticyeojido.network.RetrofitClient
 import com.example.romanticyeojido.ui.locker.PhotoPagerAdapter
 import retrofit2.Response

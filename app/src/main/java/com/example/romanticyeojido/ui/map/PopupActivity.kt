@@ -1,7 +1,6 @@
 package com.example.romanticyeojido.ui.map
 
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -10,13 +9,11 @@ import android.widget.PopupWindow
 import com.bumptech.glide.Glide
 import com.example.romanticyeojido.R
 import com.example.romanticyeojido.databinding.ItemMappopupBinding
-import com.example.romanticyeojido.network.AccessTokenManager
-import com.example.romanticyeojido.network.PopupInterface
+import com.example.romanticyeojido.network.socialLogin.AccessTokenManager
+import com.example.romanticyeojido.network.map.PopupInterface
 //import com.example.romanticyeojido.network.BASE_URL
-import com.example.romanticyeojido.network.memoryPost.MemoryInterface
-import com.example.romanticyeojido.network.PopupResponse
+import com.example.romanticyeojido.network.map.PopupResponse
 import com.example.romanticyeojido.network.RetrofitClient
-import com.example.romanticyeojido.network.RetrofitClient.BASE_URL
 //import com.example.romanticyeojido.network.getRetrofit
 import retrofit2.Call
 import retrofit2.Callback

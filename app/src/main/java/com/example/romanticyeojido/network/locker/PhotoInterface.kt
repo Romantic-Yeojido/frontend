@@ -1,4 +1,4 @@
-package com.example.romanticyeojido.network
+package com.example.romanticyeojido.network.locker
 
 import okhttp3.MultipartBody
 import retrofit2.Call
