@@ -3,6 +3,7 @@ package com.example.romanticyeojido
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.romanticyeojido.databinding.ActivityMainBinding
 import com.example.romanticyeojido.ui.locker.LockerActivity
@@ -25,9 +26,19 @@ class MainActivity : AppCompatActivity() {
 
         val userName = intent.getStringExtra("USER_NAME")
         val userEmail = intent.getStringExtra("USER_EMAIL")
+        val userId = intent.getStringExtra("USER_ID")
+
+        val isApiSuccess = intent.getBooleanExtra("API_SUCCESS", false)  // 기본값은 false
+
+        if (isApiSuccess) {
+            Toast.makeText(this, "API 통신 성공", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "API 통신 실패", Toast.LENGTH_SHORT).show()
+        }
 
         Log.d("MainActivity", "User Name: $userName")
         Log.d("MainActivity", "User Email: $userEmail")
+        Log.d("MainActivity", "User Id: $userId")
 
         initOnClickListener()
     }
