@@ -1,34 +1,18 @@
 package com.example.romanticyeojido
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.romanticyeojido.databinding.ActivityMainBinding
 import com.example.romanticyeojido.databinding.ActivitySplashBinding
-import com.example.romanticyeojido.network.AccessTokenManager
-import com.example.romanticyeojido.network.AuthResponse
-import com.example.romanticyeojido.network.NaverAuthInterface
-import com.example.romanticyeojido.network.RetrofitClient
-import com.example.romanticyeojido.network.UserInfoDialog
-import com.example.romanticyeojido.network.Utility
+import com.example.romanticyeojido.ui.UserInfoDialog
+import com.example.romanticyeojido.utils.Utility
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.common.model.AuthErrorCause
 import com.kakao.sdk.user.UserApiClient
 import com.kakao.sdk.user.model.User
-import com.navercorp.nid.NaverIdLoginSDK
-import com.navercorp.nid.oauth.NidOAuthLogin
-import com.navercorp.nid.oauth.NidOAuthPreferencesManager.accessToken
-import com.navercorp.nid.oauth.OAuthLoginCallback
-import com.navercorp.nid.profile.NidProfileCallback
-import com.navercorp.nid.profile.data.NidProfileResponse
-import retrofit2.Call
-import retrofit2.Response
 
 class SplashActivity : AppCompatActivity() {
 

@@ -1,4 +1,4 @@
-package com.example.romanticyeojido.network
+package com.example.romanticyeojido.network.map
 
 import retrofit2.Call
 import retrofit2.http.GET

@@ -26,12 +26,3 @@ data class MemoryResult(
     @SerializedName(value = "content") val content: String,
     @SerializedName(value = "summary") val summary: String
 )
-
-interface MemoryService {
-    @POST("api/v1/users/{userId}/locations/{location}")
-    fun postMemory(
-        @Path("userId") userId: Int,
-        @Path("location") location: Int,
-        @Body memoryRequest: MemoryRequest
-    ): Call<MemoryResponse>
-}

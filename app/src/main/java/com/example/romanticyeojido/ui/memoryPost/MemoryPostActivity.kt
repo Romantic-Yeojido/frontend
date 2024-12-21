@@ -15,18 +15,22 @@ import androidx.core.app.ActivityCompat.startActivityForResult
 import com.example.romanticyeojido.R
 import com.example.romanticyeojido.databinding.ActivityMemoryPostBinding
 import com.example.romanticyeojido.network.RetrofitClient
+import com.example.romanticyeojido.network.memoryPost.ImageService
 import com.example.romanticyeojido.network.memoryPost.MemoryRequest
 import com.example.romanticyeojido.network.memoryPost.MemoryResponse
 import com.example.romanticyeojido.network.memoryPost.MemoryService
+import com.example.romanticyeojido.ui.map.MapActivity
+import com.example.romanticyeojido.utils.createImageMultipart
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.ShapeAppearanceModel
+import okhttp3.MultipartBody
+import okhttp3.ResponseBody
 import retrofit2.Call
+import java.util.UUID
 
 class MemoryPostActivity: AppCompatActivity() {
 
-    private var lat: Double? = null
-    private var lng: Double? = null
     private lateinit var binding : ActivityMemoryPostBinding
 
     val years = listOf("년도", "2020", "2021", "2022", "2023", "2024", "2025", "2026", "2027")
@@ -47,11 +51,9 @@ class MemoryPostActivity: AppCompatActivity() {
 
 
         //좌표값 받기
-        val intent = intent
+//        val intent = intent
 //        lat = intent.getDoubleExtra("lat", 0.0)
 //        lng = intent.getDoubleExtra("lng", 0.0)
-
-
 
         val spf = getSharedPreferences("map_location", MODE_PRIVATE)
         val lat = spf.getString("lat", "")
@@ -307,14 +309,34 @@ class MemoryPostActivity: AppCompatActivity() {
 
     private fun Int.dpToPx(): Int = (this * resources.displayMetrics.density).toInt()
 
+    //추억 등록하기 함수
     private fun postMemory() {
-        val userId = 1 // 실제 사용자 ID로 변경
-        val locationId = 1 // 실제 위치 ID로 변경
 
+        //userId 받아오기
+        val userIdSpf = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        val userId = userIdSpf.getInt("USER_ID", 0)
+        Log.d("MemoryPostActivity", "USER_ID in MemoryPostActivity: $userId")
+
+        //locationId 받아오기
+        val locationIdspf = getSharedPreferences("MapPreferences", MODE_PRIVATE)
+        val locationId = locationIdspf.getInt("locationId", 0)
+
+        if (locationId != -1) {
+            Log.d("MemoryPostActivity", "받은 locationId: $locationId")
+            // locationId를 사용하여 추억 등록 관련 작업을 진행합니다.
+        } else {
+            Log.e("MemoryPostActivity", "locationId가 저장되지 않았습니다.")
+        }
+
+        //작성한 데이터 변수 선언
         val title = binding.postTitleEt.text.toString()
         val visitDate = "${binding.postYearOptionDd.selectedItem}-${binding.postMonthOptionDd.selectedItem}-${binding.postDayOptionDd.selectedItem}"
         val friends = binding.postPeopleEt.text.toString()
         val content = binding.postContentEt.text.toString()
+
+        //memoryId 선언
+        val memoryId = UUID.randomUUID().toString()
+        Log.d("MemoryPostActivity", "memoryId: ${memoryId}")
 
         val memoryRequest = MemoryRequest(
             title = title,
@@ -330,6 +352,15 @@ class MemoryPostActivity: AppCompatActivity() {
                     val result = response.body()?.result
                     Log.d("MemoryPostActivity", "추억 등록 성공: $result")
                     // 성공 알림 또는 화면 이동 처리
+
+                    // 추억 등록 후, 맵 액티비티로 locationId 전송
+                    val intent = Intent(this@MemoryPostActivity, MapActivity::class.java)
+                    intent.putExtra("locationId", locationId)  // locationId 전달
+//                    intent.putExtra("title", response.body()?.result?.title)
+//                    intent.putExtra("visit_date", response.body()?.result?.visit_date)
+//                    intent.putExtra("content", response.body()?.result?.content)
+//                    intent.putExtra("friends", response.body()?.result?.friends)
+//                    intent.putExtra("summary", response.body()?.result?.summary)
                 } else {
                     Log.e("MemoryPostActivity", "추억 등록 실패: ${response.errorBody()?.string()}")
                 }
@@ -341,4 +372,70 @@ class MemoryPostActivity: AppCompatActivity() {
         })
     }
 
+    private fun uploadImages(memoryId: Int, imageUris: List<Uri>) {
+        val imageParts = mutableListOf<MultipartBody.Part>()
+
+        // Uri 리스트를 MultipartBody.Part로 변환
+        for ((index, uri) in imageUris.withIndex()) {
+            createImageMultipart(this, uri, "images[$index]")?.let {
+                imageParts.add(it)
+            }
+        }
+
+        val imageService = RetrofitClient.instance.create(ImageService::class.java)
+        imageService.uploadImages(memoryId, imageParts)
+            .enqueue(object : retrofit2.Callback<ResponseBody> {
+                override fun onResponse(
+                    call: Call<ResponseBody>,
+                    response: retrofit2.Response<ResponseBody>
+                ) {
+                    if (response.isSuccessful) {
+                        Log.d("MemoryPostActivity", "이미지 업로드 성공")
+                    } else {
+                        Log.e("MemoryPostActivity", "이미지 업로드 실패: ${response.errorBody()?.string()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    Log.e("MemoryPostActivity", "이미지 업로드 에러: ${t.message}")
+                }
+            })
+
+//        override fun onResponse(call: Call<MemoryResponse>, response: retrofit2.Response<MemoryResponse>) {
+//            if (response.isSuccessful) {
+//                val memoryId = response.body()?.result?.id
+//                Log.d("MemoryPostActivity", "추억 등록 성공: $memoryId")
+//
+//                if (memoryId != null) {
+//                    uploadImages(memoryId, selectedImageUris) // selectedImageUris는 선택된 이미지의 Uri 리스트
+//                }
+//            } else {
+//                Log.e("MemoryPostActivity", "추억 등록 실패: ${response.errorBody()?.string()}")
+//            }
+//        }
+//
+//        private val selectedImageUris = mutableListOf<Uri>()
+//
+//        override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//            super.onActivityResult(requestCode, resultCode, data)
+//            if (requestCode == REQUEST_CODE_SELECT_IMAGES && resultCode == RESULT_OK) {
+//                val clipData = data?.clipData
+//                if (clipData != null) {
+//                    for (i in 0 until clipData.itemCount) {
+//                        val imageUri = clipData.getItemAt(i).uri
+//                        selectedImageUris.add(imageUri)
+//                        addImageToScrollView(imageUri)
+//                    }
+//                } else {
+//                    data?.data?.let { imageUri ->
+//                        selectedImageUris.add(imageUri)
+//                        addImageToScrollView(imageUri)
+//                    }
+//                }
+//            }
+//        }
+//    }
+//
+//
+    }
 }

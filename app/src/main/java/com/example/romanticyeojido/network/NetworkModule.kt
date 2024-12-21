@@ -1,6 +1,6 @@
 package com.example.romanticyeojido.network
 
-import android.content.Context
+import com.example.romanticyeojido.network.socialLogin.AccessTokenManager
 import com.google.gson.GsonBuilder
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient

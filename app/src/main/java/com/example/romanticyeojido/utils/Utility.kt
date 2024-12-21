@@ -1,4 +1,4 @@
-package com.example.romanticyeojido.network
+package com.example.romanticyeojido.utils
 
 import android.content.Context
 import android.util.Base64

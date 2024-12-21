@@ -1,4 +1,4 @@
-package com.example.romanticyeojido.network
+package com.example.romanticyeojido.network.locker
 
 import android.content.ContentResolver
 import android.net.Uri
