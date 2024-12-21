@@ -33,10 +33,15 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".WebViewActivity"
+            android:exported="true"
+            android:theme="@style/FullStatusTheme"/>
+
         <!-- LoadingActivity 추가 -->
         <activity
             android:name=".LoadingActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/FullStatusTheme"/>
 
         <!-- MainActivity 설정 -->
         <activity
