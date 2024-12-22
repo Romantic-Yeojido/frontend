@@ -1,5 +1,6 @@
 package com.example.romanticyeojido.ui.map
 
+import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -60,7 +61,7 @@ class MapActivity: AppCompatActivity()  {
                 sendNewPin(userId,latitude,longitude) // 서버에 핀 정보 전송
 
                 val intent = Intent(this, MemoryPostActivity::class.java).apply{}
-
+                onPause()
                 startActivity(intent)
                 clearUnsavedLabel() // 라벨 초기화
             } ?: Toast.makeText(this, "핀을 선택해주세요!", Toast.LENGTH_SHORT).show()
@@ -79,12 +80,11 @@ class MapActivity: AppCompatActivity()  {
 
         //       Log.d("MapActivity", "받은 memory_data: $locationId, $title, $visit_date, $content, $friends, $summary")
 
-        initializeMap()
-        fetchLocations(userId)
+        initializeMap(userId)
     }
 
     //API 호출 - 저장된 핀 호출
-    private fun fetchLocations(userId: Int) {
+    public fun fetchLocations(userId: Int) {
         val call = pinInterface.getLocations(userId)
 
         call.enqueue(object : Callback<PinResponse> {
@@ -93,15 +93,27 @@ class MapActivity: AppCompatActivity()  {
                     val pinResponse = response.body()
                     if (pinResponse != null && pinResponse.success) {
                         // locations가 null이 아닌지 확인
-                        if (pinResponse.locations != null) {
-                            pinResponse.locations.forEachIndexed { index, location ->
+                        if (pinResponse.result != null) {
+                            pinResponse.result.forEachIndexed { index, location ->
                                 Log.d("Location", "위치 $index: 위도: ${location.latitude}, 경도: ${location.longitude}")
+                                if (location.latitude == null || location.longitude == null) {
+                                    Log.e("pinResponse", "위도/경도 값이 null입니다.")
+                                }
+
 
                                 val styles = kakaoMap?.labelManager?.addLabelStyles(
                                     LabelStyles.from(
-                                        LabelStyle.from(R.drawable.ic_pin_gray).setAnchorPoint(0.5f, 1.0f)
+                                        try {
+                                            LabelStyle.from(R.drawable.ic_pin_gray).setAnchorPoint(0.5f, 1.0f)
+                                        } catch (e: Exception) {
+                                            Log.e("LabelStyleError", "LabelStyle 생성 중 오류 발생", e)
+                                            return // 오류 발생 시 실행 중단
+                                        }
                                     )
                                 )
+                                if (styles == null) {
+                                    Log.e("pinResponse", "LabelStyles 생성 실패")
+                                }
                                 // 지도에 위치 추가
                                 val options = LabelOptions.from(LatLng.from(location.latitude, location.longitude)).setStyles(styles)
                                 val layer = kakaoMap?.labelManager?.layer
@@ -112,25 +124,26 @@ class MapActivity: AppCompatActivity()  {
                                 }
                             }
                         } else {
-                            Log.d("API", "위치 정보가 없습니다.")
+                            Log.d("pinResponse", "위치 정보가 없습니다.")
                         }
                     } else {
-                        Log.d("API", "응답이 성공적이지 않음")
+                        Log.d("pinResponse", "응답이 성공적이지 않음")
                     }
                 } else {
-                    Log.e("API", "응답 실패: ${response.code()}")
+                    Log.e("pinResponse", "응답 실패: ${response.code()}")
                 }
             }
 
             override fun onFailure(call: Call<PinResponse>, t: Throwable) {
-                Log.e("API", "API 호출 실패", t)
+                Log.e("pinResponse", "API 호출 실패", t)
             }
         })
     }
 
-    private fun initializeMap() {
+    private fun initializeMap(userId: Int) {
         binding.mapView.start(object : MapLifeCycleCallback() {
             override fun onMapDestroy() {
+                Log.d("onMapDestroy", "onMapDestroy")
                 // 지도 API 종료 시 호출
             }
 
@@ -141,6 +154,7 @@ class MapActivity: AppCompatActivity()  {
             override fun onMapReady(map: KakaoMap) {
                 kakaoMap = map
                 setupMap() // 지도 설정
+                fetchLocations(userId)
             }
 
             override fun getPosition(): LatLng {
@@ -154,8 +168,11 @@ class MapActivity: AppCompatActivity()  {
             override fun isVisible(): Boolean {
                 return true // 지도 표시 여부
             }
+
         })
     }
+
+
 
     // 지도 시작 설정
     private fun setupMap() {
@@ -264,10 +281,17 @@ class MapActivity: AppCompatActivity()  {
     override fun onResume() {
         super.onResume()
         binding.mapView.resume() // MapView resume
+        Log.d("MapLog", "Map_resume")
+        val spf = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        val userId = spf.getInt("USER_ID", 0)
+        Log.d("MapActivity", "USER_ID in MainActivity: $userId")
+        fetchLocations(userId)
     }
+
 
     override fun onPause() {
         super.onPause()
         binding.mapView.pause() // MapView pause
+        Log.d("MapLog", "Map_pause")
     }
 }

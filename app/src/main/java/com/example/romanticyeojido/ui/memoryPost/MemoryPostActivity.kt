@@ -56,8 +56,8 @@ class MemoryPostActivity: AppCompatActivity() {
 //        lng = intent.getDoubleExtra("lng", 0.0)
 
         val spf = getSharedPreferences("map_location", MODE_PRIVATE)
-        val lat = spf.getString("lat", "")
-        val lng = spf.getString("lng", "")
+        val lat = spf.getString("latitude", "")
+        val lng = spf.getString("longitude", "")
 
         Log.d("MemoryPostActivity", "lat: $lat")
         Log.d("MemoryPostActivity", "lng: $lng")
