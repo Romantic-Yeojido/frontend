@@ -3,7 +3,7 @@ package com.example.romanticyeojido.network.map
 
 data class PinResponse(
     val success: Boolean,
-    val locations: List<LocationData>
+    val result: List<LocationData>
 )
 
 data class LocationData(

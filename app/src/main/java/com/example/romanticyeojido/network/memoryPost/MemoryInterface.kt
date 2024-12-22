@@ -4,6 +4,7 @@ import com.example.romanticyeojido.network.map.PopupResponse
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Multipart
@@ -38,4 +39,12 @@ interface ImageService {
         @Path("memoryId") memoryId : Int,
         @Part images: List<MultipartBody.Part>
     ): Call<ResponseBody>
+}
+
+interface MemoryContentInterface {
+    @GET("/api/v1/users/{userId}/locations/{locationId}/memory-content")
+    suspend fun getMemoryContent(
+        @Path("userId") userId: Int,
+        @Path("locationId") locationId: Int
+    ): Response<MemoryContentResponse>
 }
