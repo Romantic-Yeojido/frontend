@@ -26,3 +26,26 @@ data class MemoryResult(
     @SerializedName(value = "content") val content: String,
     @SerializedName(value = "summary") val summary: String
 )
+
+data class MemoryContentResponse(
+    val result: MemoryContent
+)
+
+data class MemoryContent(
+    val id: Int,
+    val user_id: Int,
+    val location_id: Int,
+    val title: String,
+    val visit_date: String,
+    val friends: String,
+    val content: String,
+    val summary: String,
+    val is_deleted: Int,
+    val created_at: String,
+    val updated_at: String
+)
+
+data class ErrorResponse(
+    val success: Boolean,
+    val message: String
+)

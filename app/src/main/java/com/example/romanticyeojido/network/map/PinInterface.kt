@@ -11,4 +11,5 @@ interface PinInterface {
     fun getLocations(
         @Path("userId") userId: Int,
     ): Call<PinResponse>
+
 }

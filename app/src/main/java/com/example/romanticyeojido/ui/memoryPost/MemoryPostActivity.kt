@@ -10,12 +10,15 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat.startActivityForResult
+import androidx.lifecycle.lifecycleScope
 import com.example.romanticyeojido.R
 import com.example.romanticyeojido.databinding.ActivityMemoryPostBinding
 import com.example.romanticyeojido.network.RetrofitClient
 import com.example.romanticyeojido.network.memoryPost.ImageService
+import com.example.romanticyeojido.network.memoryPost.MemoryContentInterface
 import com.example.romanticyeojido.network.memoryPost.MemoryRequest
 import com.example.romanticyeojido.network.memoryPost.MemoryResponse
 import com.example.romanticyeojido.network.memoryPost.MemoryService
@@ -24,6 +27,7 @@ import com.example.romanticyeojido.utils.createImageMultipart
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.ShapeAppearanceModel
+import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -56,8 +60,8 @@ class MemoryPostActivity: AppCompatActivity() {
 //        lng = intent.getDoubleExtra("lng", 0.0)
 
         val spf = getSharedPreferences("map_location", MODE_PRIVATE)
-        val lat = spf.getString("lat", "")
-        val lng = spf.getString("lng", "")
+        val lat = spf.getString("latitude", "")
+        val lng = spf.getString("longitude", "")
 
         Log.d("MemoryPostActivity", "lat: $lat")
         Log.d("MemoryPostActivity", "lng: $lng")
@@ -328,6 +332,9 @@ class MemoryPostActivity: AppCompatActivity() {
             Log.e("MemoryPostActivity", "locationId가 저장되지 않았습니다.")
         }
 
+
+        fetchMemoryContent(userId, locationId)
+
         //작성한 데이터 변수 선언
         val title = binding.postTitleEt.text.toString()
         val visitDate = "${binding.postYearOptionDd.selectedItem}-${binding.postMonthOptionDd.selectedItem}-${binding.postDayOptionDd.selectedItem}"
@@ -400,42 +407,30 @@ class MemoryPostActivity: AppCompatActivity() {
                     Log.e("MemoryPostActivity", "이미지 업로드 에러: ${t.message}")
                 }
             })
+    }
 
-//        override fun onResponse(call: Call<MemoryResponse>, response: retrofit2.Response<MemoryResponse>) {
-//            if (response.isSuccessful) {
-//                val memoryId = response.body()?.result?.id
-//                Log.d("MemoryPostActivity", "추억 등록 성공: $memoryId")
-//
-//                if (memoryId != null) {
-//                    uploadImages(memoryId, selectedImageUris) // selectedImageUris는 선택된 이미지의 Uri 리스트
-//                }
-//            } else {
-//                Log.e("MemoryPostActivity", "추억 등록 실패: ${response.errorBody()?.string()}")
-//            }
-//        }
-//
-//        private val selectedImageUris = mutableListOf<Uri>()
-//
-//        override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//            super.onActivityResult(requestCode, resultCode, data)
-//            if (requestCode == REQUEST_CODE_SELECT_IMAGES && resultCode == RESULT_OK) {
-//                val clipData = data?.clipData
-//                if (clipData != null) {
-//                    for (i in 0 until clipData.itemCount) {
-//                        val imageUri = clipData.getItemAt(i).uri
-//                        selectedImageUris.add(imageUri)
-//                        addImageToScrollView(imageUri)
-//                    }
-//                } else {
-//                    data?.data?.let { imageUri ->
-//                        selectedImageUris.add(imageUri)
-//                        addImageToScrollView(imageUri)
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//
+    fun fetchMemoryContent(userId: Int, locationId: Int) {
+        // Create a Retrofit instance and API service
+        val apiService = RetrofitClient.instance.create(MemoryContentInterface::class.java)
+
+        // Make the API call
+        lifecycleScope.launch {
+            try {
+                val response = apiService.getMemoryContent(userId, locationId)
+                if (response.isSuccessful) {
+                    val memoryContent = response.body()?.result
+                    if (memoryContent != null) {
+                        // Memory data fetched successfully, handle it here
+                        Log.d("MemoryData", "Memory Title: ${memoryContent.title}")
+                        // You can display it in a Toast or another UI element
+                        Toast.makeText(this@MemoryPostActivity, "Memory loaded: ${memoryContent.title}", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Log.e("MemoryData", "Error fetching memory data: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                Log.e("MemoryData", "API call failed", e)
+            }
+        }
     }
 }
