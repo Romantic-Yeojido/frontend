@@ -7,6 +7,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.romanticyeojido.R
 import com.example.romanticyeojido.databinding.ActivityMapBinding
 import com.example.romanticyeojido.network.map.PinInterface
@@ -15,6 +16,9 @@ import com.example.romanticyeojido.network.map.NewpinInterface
 import com.example.romanticyeojido.network.map.NewpinRequest
 import com.example.romanticyeojido.network.map.NewpinResponse
 import com.example.romanticyeojido.network.RetrofitClient
+import com.example.romanticyeojido.network.memoryPost.MemoryContentInterface
+import com.example.romanticyeojido.network.memoryPost.MemoryInterface
+import com.example.romanticyeojido.network.memoryPost.MemoryService
 import com.example.romanticyeojido.ui.memoryPost.MemoryPostActivity
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -26,6 +30,7 @@ import com.kakao.vectormap.label.LabelLayer
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -96,33 +101,9 @@ class MapActivity: AppCompatActivity()  {
                         // locations가 null이 아닌지 확인
                         if (pinResponse.result != null) {
                             pinResponse.result.forEachIndexed { index, location ->
-                                Log.d(
-                                    "Location",
-                                    "위치 $index: 위도: ${location.latitude}, 경도: ${location.longitude}"
-                                )
+                                Log.d("Location", "위치 $index: 위도: ${location.latitude}, 경도: ${location.longitude}")
                                 if (location.latitude == null || location.longitude == null) {
                                     Log.e("pinResponse", "위도/경도 값이 null입니다.")
-                                }
-                                val styles = kakaoMap?.labelManager?.addLabelStyles(
-                                    LabelStyles.from(
-                                        try {
-                                            LabelStyle.from(R.drawable.ic_pin_gray)
-                                                .setAnchorPoint(0.5f, 1.0f)
-                                        } catch (e: Exception) {
-                                            Log.e("LabelStyleError", "LabelStyle 생성 중 오류 발생", e)
-                                            return // 오류 발생 시 실행 중단
-                                        }
-                                    )
-                                )
-                                if (styles == null) {
-                                    Log.e("pinResponse", "LabelStyles 생성 실패")
-                                }
-                                // 지도에 위치 추가
-                                val options = LabelOptions.from(LatLng.from(location.latitude, location.longitude)).setStyles(styles)
-                                val layer = kakaoMap?.labelManager?.layer
-                                if (layer != null) {
-                                    val label = layer.addLabel(options)
-                                    label.show()
                                 }
                             }
                         } else {
@@ -230,41 +211,6 @@ class MapActivity: AppCompatActivity()  {
             editor.putString("latitude", label.position.latitude.toString())
             editor.putString("longitude", label.position.longitude.toString())
             editor.apply()
-
-//            val spf = getSharedPreferences("MemoryContents", MODE_PRIVATE)
-//            val title = spf.getString("title", "")
-//            val visit_date = spf.getString("visit_date", "")
-//            val content = spf.getString("content", "")
-//            val friends = spf.getString("friends", "")
-//            val summary = spf.getString("summary", "")
-//
-//            Log.d("MapActivity", "MemoryContents: $title")
-
-
-
-//            val styles = kakaoMap?.labelManager?.addLabelStyles(
-//                LabelStyles.from(
-//                    try {
-//                        LabelStyle.from(R.drawable.ic_pin_gray).setAnchorPoint(0.5f, 1.0f)
-//                    } catch (e: Exception) {
-//                        Log.e("LabelStyleError", "LabelStyle 생성 중 오류 발생", e)
-//                        return // 오류 발생 시 실행 중단
-//                    }
-//                )
-//            )
-//
-//            if (styles == null) {
-//                Log.e("pinResponse", "LabelStyles 생성 실패")
-//            }
-//
-//            // 지도에 위치 추가
-//            val options = LabelOptions.from(position).setStyles(styles)
-//            val layer = kakaoMap?.labelManager?.layer
-//
-//            if (layer != null) {
-//                val fixedLabel = layer.addLabel(options)
-//                fixedLabel.show()
-//            }
         }
     }
 
@@ -274,6 +220,11 @@ class MapActivity: AppCompatActivity()  {
 
         val spf = getSharedPreferences("UserPrefs", MODE_PRIVATE)
         val userId = spf.getInt("USER_ID", 0)
+
+        val locationIdSpf = getSharedPreferences("MapPreferences", MODE_PRIVATE)
+        val locationId = locationIdSpf.getInt("locationId", 0)
+
+        fetchMemoryContent(userId, locationId)
 
         val popupActivity = PopupActivity(this)
         popupActivity.showPopup(binding.root, userId) {
@@ -357,6 +308,7 @@ class MapActivity: AppCompatActivity()  {
                     LabelStyle.from(R.drawable.ic_pin_gray).setAnchorPoint(0.5f, 1.0f)
                 )
             )
+
             val options = LabelOptions.from(position).setStyles(styles)
             val layer = kakaoMap?.labelManager?.layer
 
@@ -376,4 +328,30 @@ class MapActivity: AppCompatActivity()  {
         binding.mapView.pause() // MapView pause
         Log.d("MapLog", "Map_pause")
     }
+
+    private fun fetchMemoryContent(userId: Int, locationId: Int) {
+        // Create a Retrofit instance and API service
+        val apiService = RetrofitClient.instance.create(MemoryContentInterface::class.java)
+
+        // Make the API call
+        lifecycleScope.launch {
+            try {
+                val response = apiService.getMemoryContent(userId, locationId)
+                if (response.isSuccessful) {
+                    val memoryContent = response.body()?.result
+                    if (memoryContent != null) {
+                        // Memory data fetched successfully, handle it here
+                        Log.d("MemoryData", "Memory Title: ${memoryContent.title}")
+                        // You can display it in a Toast or another UI element
+                        Toast.makeText(this@MapActivity, "Memory loaded: ${memoryContent.title}", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Log.e("MemoryData", "Error fetching memory data: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                Log.e("MemoryData", "API call failed", e)
+            }
+        }
+    }
+
 }
