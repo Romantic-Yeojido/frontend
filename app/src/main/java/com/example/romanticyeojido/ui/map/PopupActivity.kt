@@ -51,18 +51,18 @@ class PopupActivity (private val context: Context) {
         val apiService = RetrofitClient.instance.create(PopupInterface::class.java)
         val accessToken = AccessTokenManager.getAccessToken() ?: ""
 
-        apiService.getPopupData(accessToken,"application/json",userId,latitude,longitude).enqueue(object : Callback<PopupResponse> {
+        apiService.getPopupData(userId,latitude,longitude).enqueue(object : Callback<PopupResponse> {
             override fun onResponse(call: Call<PopupResponse>, response: Response<PopupResponse>) {
                 if (response.isSuccessful && response.body()?.success == true) {
-                    response.body()?.memory?.let { memory ->
+                    response.body()?.result?.let { result ->
                     // 성공 로그 추가
-                        Log.d("PopupData", "데이터를 성공적으로 불러왔습니다: ${memory.title}, 방문일: ${memory.visit_date}, 친구: ${memory.friends}")
+                        Log.d("PopupData", "데이터를 성공적으로 불러왔습니다: ${result.title}, 방문일: ${result.visit_date}, 친구: ${result.friends}")
 
-                        binding.tvPopupTitle.text = memory.title
-                        binding.tvPopupDate.text = "방문일: ${memory.visit_date} / 친구: ${memory.friends}"
-                        binding.tvPopupDescription.text = memory.gpt_summary
+                        binding.tvPopupTitle.text = result.title
+                        binding.tvPopupDate.text = "방문일: ${result.visit_date} / 친구: ${result.friends}"
+                        binding.tvPopupDescription.text = result.gpt_summary
                         Glide.with(binding.imgPopup.context)
-                            .load(RetrofitClient.BASE_URL + memory.image_url)
+                            .load(RetrofitClient.BASE_URL + result.image_url)
                             .into(binding.imgPopup)
                     }
                 } else {

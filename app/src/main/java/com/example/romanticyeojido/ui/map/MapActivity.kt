@@ -1,5 +1,6 @@
 package com.example.romanticyeojido.ui.map
 
+import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -60,7 +61,7 @@ class MapActivity: AppCompatActivity()  {
                 sendNewPin(userId,latitude,longitude) // 서버에 핀 정보 전송
 
                 val intent = Intent(this, MemoryPostActivity::class.java).apply{}
-
+                onPause()
                 startActivity(intent)
                 clearUnsavedLabel() // 라벨 초기화
             } ?: Toast.makeText(this, "핀을 선택해주세요!", Toast.LENGTH_SHORT).show()
@@ -71,20 +72,20 @@ class MapActivity: AppCompatActivity()  {
         }
 
         //  val locationId = intent.getIntExtra("locationId", 0)
-        //   val title = intent.getStringExtra("title")
-        //    val visit_date = intent.getStringExtra("visit_date")
-        // val content = intent.getStringExtra("content")
-        //  val friends = intent.getStringExtra("friends")
-        //      val summary = intent.getStringExtra("summary")
+//        val title = intent.getStringExtra("title")
+//        val visit_date = intent.getStringExtra("visit_date")
+//        val content = intent.getStringExtra("content")
+//        val friends = intent.getStringExtra("friends")
+//        val summary = intent.getStringExtra("summary")
+//
+//        Log.d("MapActivity", "받은 추억 데이터: $title, $visit_date, $content, $friends, $summary")
 
-        //       Log.d("MapActivity", "받은 memory_data: $locationId, $title, $visit_date, $content, $friends, $summary")
-
-        initializeMap()
+        initializeMap(userId)
         fetchLocations(userId)
     }
 
     //API 호출 - 저장된 핀 호출
-    private fun fetchLocations(userId: Int) {
+    fun fetchLocations(userId: Int) {
         val call = pinInterface.getLocations(userId)
 
         call.enqueue(object : Callback<PinResponse> {
@@ -93,44 +94,59 @@ class MapActivity: AppCompatActivity()  {
                     val pinResponse = response.body()
                     if (pinResponse != null && pinResponse.success) {
                         // locations가 null이 아닌지 확인
-                        if (pinResponse.locations != null) {
-                            pinResponse.locations.forEachIndexed { index, location ->
-                                Log.d("Location", "위치 $index: 위도: ${location.latitude}, 경도: ${location.longitude}")
-
+                        if (pinResponse.result != null) {
+                            pinResponse.result.forEachIndexed { index, location ->
+                                Log.d(
+                                    "Location",
+                                    "위치 $index: 위도: ${location.latitude}, 경도: ${location.longitude}"
+                                )
+                                if (location.latitude == null || location.longitude == null) {
+                                    Log.e("pinResponse", "위도/경도 값이 null입니다.")
+                                }
                                 val styles = kakaoMap?.labelManager?.addLabelStyles(
                                     LabelStyles.from(
-                                        LabelStyle.from(R.drawable.ic_pin_gray).setAnchorPoint(0.5f, 1.0f)
+                                        try {
+                                            LabelStyle.from(R.drawable.ic_pin_gray)
+                                                .setAnchorPoint(0.5f, 1.0f)
+                                        } catch (e: Exception) {
+                                            Log.e("LabelStyleError", "LabelStyle 생성 중 오류 발생", e)
+                                            return // 오류 발생 시 실행 중단
+                                        }
                                     )
                                 )
+                                if (styles == null) {
+                                    Log.e("pinResponse", "LabelStyles 생성 실패")
+                                }
                                 // 지도에 위치 추가
                                 val options = LabelOptions.from(LatLng.from(location.latitude, location.longitude)).setStyles(styles)
                                 val layer = kakaoMap?.labelManager?.layer
-
                                 if (layer != null) {
                                     val label = layer.addLabel(options)
                                     label.show()
                                 }
                             }
                         } else {
-                            Log.d("API", "위치 정보가 없습니다.")
+                            Log.d("pinResponse", "위치 정보가 없습니다.")
                         }
                     } else {
-                        Log.d("API", "응답이 성공적이지 않음")
+                        Log.d("pinResponse", "응답이 성공적이지 않음")
                     }
                 } else {
-                    Log.e("API", "응답 실패: ${response.code()}")
+                    Log.e("pinResponse", "응답 실패: ${response.code()}")
                 }
             }
 
             override fun onFailure(call: Call<PinResponse>, t: Throwable) {
-                Log.e("API", "API 호출 실패", t)
+                Log.e("pinResponse", "API 호출 실패", t)
             }
         })
     }
 
-    private fun initializeMap() {
+    //지도 설정 함수
+    private fun initializeMap(userId: Int) {
         binding.mapView.start(object : MapLifeCycleCallback() {
             override fun onMapDestroy() {
+                Log.d("onMapDestroy", "onMapDestroy")
                 // 지도 API 종료 시 호출
             }
 
@@ -141,6 +157,7 @@ class MapActivity: AppCompatActivity()  {
             override fun onMapReady(map: KakaoMap) {
                 kakaoMap = map
                 setupMap() // 지도 설정
+                fetchLocations(userId)
             }
 
             override fun getPosition(): LatLng {
@@ -154,8 +171,11 @@ class MapActivity: AppCompatActivity()  {
             override fun isVisible(): Boolean {
                 return true // 지도 표시 여부
             }
+
         })
     }
+
+
 
     // 지도 시작 설정
     private fun setupMap() {
@@ -173,6 +193,7 @@ class MapActivity: AppCompatActivity()  {
     private fun addLabel(position: LatLng) {
         // 기존 임시 라벨 제거
         unsavedLabel?.remove()
+
         val styles = kakaoMap?.labelManager?.addLabelStyles(
             LabelStyles.from(
                 LabelStyle.from(R.drawable.ic_pin).setAnchorPoint(0.5f, 1.0f)
@@ -183,8 +204,11 @@ class MapActivity: AppCompatActivity()  {
         val layer = kakaoMap?.labelManager?.layer
 
         if (layer != null) {
+            // 새로운 라벨 추가
             val label = layer.addLabel(options)
             label.show()
+
+            // 라벨을 임시 라벨로 설정
             unsavedLabel = label // 새로 생성된 라벨을 임시 라벨로 설정
 
             latitude = label.position.latitude.toString()
@@ -194,15 +218,53 @@ class MapActivity: AppCompatActivity()  {
             binding.btnRegister.isEnabled = true
             binding.btnRegister.setBackgroundColor(ContextCompat.getColor(this, R.color.P500))
 
+            // 핀 클릭 리스너
             kakaoMap?.setOnLabelClickListener { map, labelLayer, clickedLabel ->
                 initLabelClickListener(map, labelLayer, clickedLabel)
                 true
             }
+
+            // 위치 정보 저장
             val spfLoc = getSharedPreferences("map_location", MODE_PRIVATE)
             val editor = spfLoc.edit()
             editor.putString("latitude", label.position.latitude.toString())
             editor.putString("longitude", label.position.longitude.toString())
             editor.apply()
+
+//            val spf = getSharedPreferences("MemoryContents", MODE_PRIVATE)
+//            val title = spf.getString("title", "")
+//            val visit_date = spf.getString("visit_date", "")
+//            val content = spf.getString("content", "")
+//            val friends = spf.getString("friends", "")
+//            val summary = spf.getString("summary", "")
+//
+//            Log.d("MapActivity", "MemoryContents: $title")
+
+
+
+//            val styles = kakaoMap?.labelManager?.addLabelStyles(
+//                LabelStyles.from(
+//                    try {
+//                        LabelStyle.from(R.drawable.ic_pin_gray).setAnchorPoint(0.5f, 1.0f)
+//                    } catch (e: Exception) {
+//                        Log.e("LabelStyleError", "LabelStyle 생성 중 오류 발생", e)
+//                        return // 오류 발생 시 실행 중단
+//                    }
+//                )
+//            )
+//
+//            if (styles == null) {
+//                Log.e("pinResponse", "LabelStyles 생성 실패")
+//            }
+//
+//            // 지도에 위치 추가
+//            val options = LabelOptions.from(position).setStyles(styles)
+//            val layer = kakaoMap?.labelManager?.layer
+//
+//            if (layer != null) {
+//                val fixedLabel = layer.addLabel(options)
+//                fixedLabel.show()
+//            }
         }
     }
 
@@ -264,10 +326,54 @@ class MapActivity: AppCompatActivity()  {
     override fun onResume() {
         super.onResume()
         binding.mapView.resume() // MapView resume
+        Log.d("MapLog", "Map_resume")
+
+        // 사용자 ID 가져오기
+        val spf = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        val userId = spf.getInt("USER_ID", 0)
+        Log.d("MapActivity", "USER_ID in MainActivity: $userId")
+
+        // 이전에 저장한 좌표
+        val spfLoc = getSharedPreferences("map_location", MODE_PRIVATE)
+        val latitude = spfLoc.getString("latitude", null)
+        val longitude = spfLoc.getString("longitude", null)
+
+        val memoryspf = getSharedPreferences("MemoryPrefs", MODE_PRIVATE)
+        val title = memoryspf.getString("title", "")
+        val visitDate = memoryspf.getString("visit_date", "")
+        val friends = memoryspf.getString("friends", "")
+        val content = memoryspf.getString("content", "")
+        val summary = memoryspf.getString("summary", "")
+
+        // 추억 데이터 로그 확인
+        Log.d("MapActivity", "추억 데이터: title=$title, visit_date=$visitDate, friends=$friends, content=$content, summary=$summary")
+
+        // 위치가 저장되어 있으면 그곳에 핀 고정
+        if (latitude != null && longitude != null) {
+            val position = LatLng.from(latitude.toDouble(), longitude.toDouble())
+            // 기존 핀 고정 (회색 핀으로)
+            val styles = kakaoMap?.labelManager?.addLabelStyles(
+                LabelStyles.from(
+                    LabelStyle.from(R.drawable.ic_pin_gray).setAnchorPoint(0.5f, 1.0f)
+                )
+            )
+            val options = LabelOptions.from(position).setStyles(styles)
+            val layer = kakaoMap?.labelManager?.layer
+
+            if (layer != null) {
+                val fixedLabel = layer.addLabel(options)
+                fixedLabel.show()
+            }
+        }
+
+        // 위치 목록 가져오기
+        fetchLocations(userId)
     }
+
 
     override fun onPause() {
         super.onPause()
         binding.mapView.pause() // MapView pause
+        Log.d("MapLog", "Map_pause")
     }
 }

@@ -3,7 +3,7 @@ package com.example.romanticyeojido.network.map
 
 data class PopupResponse(
     val success: Boolean,
-    val memory: MemoryData
+    val result: MemoryData
 )
 
 data class MemoryData(
