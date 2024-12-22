@@ -7,6 +7,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.romanticyeojido.R
 import com.example.romanticyeojido.databinding.ActivityMapBinding
 import com.example.romanticyeojido.network.map.PinInterface
@@ -15,6 +16,7 @@ import com.example.romanticyeojido.network.map.NewpinInterface
 import com.example.romanticyeojido.network.map.NewpinRequest
 import com.example.romanticyeojido.network.map.NewpinResponse
 import com.example.romanticyeojido.network.RetrofitClient
+import com.example.romanticyeojido.network.memoryPost.MemoryContentInterface
 import com.example.romanticyeojido.ui.memoryPost.MemoryPostActivity
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -26,6 +28,7 @@ import com.kakao.vectormap.label.LabelLayer
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -71,20 +74,11 @@ class MapActivity: AppCompatActivity()  {
             finish()
         }
 
-        //  val locationId = intent.getIntExtra("locationId", 0)
-        //   val title = intent.getStringExtra("title")
-        //    val visit_date = intent.getStringExtra("visit_date")
-        // val content = intent.getStringExtra("content")
-        //  val friends = intent.getStringExtra("friends")
-        //      val summary = intent.getStringExtra("summary")
-
-        //       Log.d("MapActivity", "받은 memory_data: $locationId, $title, $visit_date, $content, $friends, $summary")
-
         initializeMap(userId)
     }
 
     //API 호출 - 저장된 핀 호출
-    public fun fetchLocations(userId: Int) {
+    fun fetchLocations(userId: Int) {
         val call = pinInterface.getLocations(userId)
 
         call.enqueue(object : Callback<PinResponse> {
@@ -230,6 +224,11 @@ class MapActivity: AppCompatActivity()  {
         val spf = getSharedPreferences("UserPrefs", MODE_PRIVATE)
         val userId = spf.getInt("USER_ID", 0)
 
+        val locationspf = getSharedPreferences("MapPreferences", MODE_PRIVATE)
+        val locationId = locationspf.getInt("locationId", 0)
+
+        fetchMemoryContent(userId, locationId)
+
         val popupActivity = PopupActivity(this)
         popupActivity.showPopup(binding.root, userId) {
         }
@@ -253,6 +252,8 @@ class MapActivity: AppCompatActivity()  {
 
                     val locationId = pinResponse!!.result.locationId
                     Log.d("NewPinAPI", "핀 정보 전송 성공, LocationId: , $locationId")
+
+//                    fetchMemoryContent(userId, locationId)
 
                     val spf = getSharedPreferences("MapPreferences", MODE_PRIVATE)
                     val editor = spf.edit()
@@ -282,9 +283,47 @@ class MapActivity: AppCompatActivity()  {
         super.onResume()
         binding.mapView.resume() // MapView resume
         Log.d("MapLog", "Map_resume")
+
+        // 사용자 ID 가져오기
         val spf = getSharedPreferences("UserPrefs", MODE_PRIVATE)
         val userId = spf.getInt("USER_ID", 0)
         Log.d("MapActivity", "USER_ID in MainActivity: $userId")
+
+        // 이전에 저장한 좌표
+        val spfLoc = getSharedPreferences("map_location", MODE_PRIVATE)
+        val latitude = spfLoc.getString("latitude", null)
+        val longitude = spfLoc.getString("longitude", null)
+
+        val memoryspf = getSharedPreferences("MemoryPrefs", MODE_PRIVATE)
+        val title = memoryspf.getString("title", "")
+        val visitDate = memoryspf.getString("visit_date", "")
+        val friends = memoryspf.getString("friends", "")
+        val content = memoryspf.getString("content", "")
+        val summary = memoryspf.getString("summary", "")
+
+        // 추억 데이터 로그 확인
+        Log.d("MapActivity", "추억 데이터: title=$title, visit_date=$visitDate, friends=$friends, content=$content, summary=$summary")
+
+        // 위치가 저장되어 있으면 그곳에 핀 고정
+        if (latitude != null && longitude != null) {
+            val position = LatLng.from(latitude.toDouble(), longitude.toDouble())
+            // 기존 핀 고정 (회색 핀으로)
+            val styles = kakaoMap?.labelManager?.addLabelStyles(
+                LabelStyles.from(
+                    LabelStyle.from(R.drawable.ic_pin_gray).setAnchorPoint(0.5f, 1.0f)
+                )
+            )
+
+            val options = LabelOptions.from(position).setStyles(styles)
+            val layer = kakaoMap?.labelManager?.layer
+
+            if (layer != null) {
+                val fixedLabel = layer.addLabel(options)
+                fixedLabel.show()
+            }
+        }
+
+        // 위치 목록 가져오기
         fetchLocations(userId)
     }
 
@@ -294,4 +333,31 @@ class MapActivity: AppCompatActivity()  {
         binding.mapView.pause() // MapView pause
         Log.d("MapLog", "Map_pause")
     }
+
+    fun fetchMemoryContent(userId: Int, locationId: Int) {
+        // Create a Retrofit instance and API service
+        val apiService = RetrofitClient.instance.create(MemoryContentInterface::class.java)
+
+        // Make the API call
+        lifecycleScope.launch {
+            try {
+                val response = apiService.getMemoryContent(userId, locationId)
+                if (response.isSuccessful) {
+                    val memoryContent = response.body()?.result
+                    if (memoryContent != null) {
+                        // Memory data fetched successfully, handle it here
+                        Log.d("MemoryData", "Memory Title: ${memoryContent.title}")
+                        // You can display it in a Toast or another UI element
+                        Toast.makeText(this@MapActivity, "Memory loaded: ${memoryContent.title}", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Log.e("MemoryData", "Error fetching memory data: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                Log.e("MemoryData", "API call failed", e)
+            }
+        }
+    }
+
+
 }
