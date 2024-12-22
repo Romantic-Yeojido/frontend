@@ -11,7 +11,6 @@ import android.widget.AdapterView
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat.startActivityForResult
 import com.example.romanticyeojido.R
 import com.example.romanticyeojido.databinding.ActivityMemoryPostBinding
 import com.example.romanticyeojido.network.RetrofitClient
@@ -153,6 +152,14 @@ class MemoryPostActivity: AppCompatActivity() {
             validateInputs()
             if (binding.postRegisterBtn.isEnabled == true) {
                 postMemory()
+//                val intent = Intent(this, MapActivity::class.java).apply{}
+//                startActivity(intent)
+//                finish()
+
+                // 맵 액티비티로 돌아가기 전에 데이터 저장을 완료한 후
+                val intent = Intent(this, MapActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT // 기존 액티비티를 재활성화
+                startActivity(intent)
                 finish()
             }
         }
@@ -334,9 +341,9 @@ class MemoryPostActivity: AppCompatActivity() {
         val friends = binding.postPeopleEt.text.toString()
         val content = binding.postContentEt.text.toString()
 
-        //memoryId 선언
-        val memoryId = UUID.randomUUID().toString()
-        Log.d("MemoryPostActivity", "memoryId: ${memoryId}")
+//        //memoryId 선언
+//        val memoryId = UUID.randomUUID().toString()
+//        Log.d("MemoryPostActivity", "memoryId: ${memoryId}")
 
         val memoryRequest = MemoryRequest(
             title = title,
@@ -351,16 +358,19 @@ class MemoryPostActivity: AppCompatActivity() {
                 if (response.isSuccessful) {
                     val result = response.body()?.result
                     Log.d("MemoryPostActivity", "추억 등록 성공: $result")
-                    // 성공 알림 또는 화면 이동 처리
 
-                    // 추억 등록 후, 맵 액티비티로 locationId 전송
-                    val intent = Intent(this@MemoryPostActivity, MapActivity::class.java)
-                    intent.putExtra("locationId", locationId)  // locationId 전달
-//                    intent.putExtra("title", response.body()?.result?.title)
-//                    intent.putExtra("visit_date", response.body()?.result?.visit_date)
-//                    intent.putExtra("content", response.body()?.result?.content)
-//                    intent.putExtra("friends", response.body()?.result?.friends)
-//                    intent.putExtra("summary", response.body()?.result?.summary)
+                    // SharedPreferences에 추억 데이터 저장
+                    val spf = getSharedPreferences("MemoryPrefs", MODE_PRIVATE)
+                    val editor = spf.edit()
+
+                    // 추억 등록 결과를 SharedPreferences에 저장
+                    editor.putString("title", result?.title)
+                    editor.putString("visit_date", result?.visit_date)
+                    editor.putString("friends", result?.friends)
+                    editor.putString("content", result?.content)
+                    editor.putString("summary", result?.summary)
+                    editor.apply()
+
                 } else {
                     Log.e("MemoryPostActivity", "추억 등록 실패: ${response.errorBody()?.string()}")
                 }
