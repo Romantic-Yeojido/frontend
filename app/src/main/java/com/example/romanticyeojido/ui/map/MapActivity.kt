@@ -96,9 +96,33 @@ class MapActivity: AppCompatActivity()  {
                         // locations가 null이 아닌지 확인
                         if (pinResponse.result != null) {
                             pinResponse.result.forEachIndexed { index, location ->
-                                Log.d("Location", "위치 $index: 위도: ${location.latitude}, 경도: ${location.longitude}")
+                                Log.d(
+                                    "Location",
+                                    "위치 $index: 위도: ${location.latitude}, 경도: ${location.longitude}"
+                                )
                                 if (location.latitude == null || location.longitude == null) {
                                     Log.e("pinResponse", "위도/경도 값이 null입니다.")
+                                }
+                                val styles = kakaoMap?.labelManager?.addLabelStyles(
+                                    LabelStyles.from(
+                                        try {
+                                            LabelStyle.from(R.drawable.ic_pin_gray)
+                                                .setAnchorPoint(0.5f, 1.0f)
+                                        } catch (e: Exception) {
+                                            Log.e("LabelStyleError", "LabelStyle 생성 중 오류 발생", e)
+                                            return // 오류 발생 시 실행 중단
+                                        }
+                                    )
+                                )
+                                if (styles == null) {
+                                    Log.e("pinResponse", "LabelStyles 생성 실패")
+                                }
+                                // 지도에 위치 추가
+                                val options = LabelOptions.from(LatLng.from(location.latitude, location.longitude)).setStyles(styles)
+                                val layer = kakaoMap?.labelManager?.layer
+                                if (layer != null) {
+                                    val label = layer.addLabel(options)
+                                    label.show()
                                 }
                             }
                         } else {
@@ -333,7 +357,6 @@ class MapActivity: AppCompatActivity()  {
                     LabelStyle.from(R.drawable.ic_pin_gray).setAnchorPoint(0.5f, 1.0f)
                 )
             )
-
             val options = LabelOptions.from(position).setStyles(styles)
             val layer = kakaoMap?.labelManager?.layer
 
