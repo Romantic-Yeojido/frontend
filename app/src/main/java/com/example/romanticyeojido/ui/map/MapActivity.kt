@@ -289,15 +289,15 @@ class MapActivity: AppCompatActivity()  {
         val latitude = spfLoc.getString("latitude", null)
         val longitude = spfLoc.getString("longitude", null)
 
-        val memoryspf = getSharedPreferences("MemoryPrefs", MODE_PRIVATE)
-        val title = memoryspf.getString("title", "")
-        val visitDate = memoryspf.getString("visit_date", "")
-        val friends = memoryspf.getString("friends", "")
-        val content = memoryspf.getString("content", "")
-        val summary = memoryspf.getString("summary", "")
-
-        // 추억 데이터 로그 확인
-        Log.d("MapActivity", "추억 데이터: title=$title, visit_date=$visitDate, friends=$friends, content=$content, summary=$summary")
+//        val memoryspf = getSharedPreferences("MemoryPrefs", MODE_PRIVATE)
+//        val title = memoryspf.getString("title", "")
+//        val visitDate = memoryspf.getString("visit_date", "")
+//        val friends = memoryspf.getString("friends", "")
+//        val content = memoryspf.getString("content", "")
+//        val summary = memoryspf.getString("summary", "")
+//
+//        // 추억 데이터 로그 확인
+//        Log.d("MapActivity", "추억 데이터: title=$title, visit_date=$visitDate, friends=$friends, content=$content, summary=$summary")
 
         // 위치가 저장되어 있으면 그곳에 핀 고정
         if (latitude != null && longitude != null) {
